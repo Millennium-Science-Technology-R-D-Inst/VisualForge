@@ -1,0 +1,6 @@
+﻿{
+  "dependencies": [
+    "sentry-native",
+    "sqlite3"
+  ]
+}

@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Xaml\View\Window\MainWindow.xaml" />
+    <Page Include="UI\Xaml\View\Page\MainView.xaml" />
+    <Page Include="Themes\Generic.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
+    <ClCompile Include="App.xaml.cpp">
+      <DependentUpon>App.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Window\MainWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Window\MainWindow.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Page\MainView.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolKind.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolCommand.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ToolRegistry.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\ClangdAdapter.cpp">
+      <Filter>Integration</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\GitAdapter.cpp">
+      <Filter>Integration</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\MSBuildAdapter.cpp">
+      <Filter>Integration</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\VcpkgAdapter.cpp">
+      <Filter>Integration</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\NuGetAdapter.cpp">
+      <Filter>Integration</Filter>
+    </ClCompile>
+    <ClCompile Include="Integration\DebugAdapter.cpp">
+      <Filter>Integration</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\WindowHelper.cpp" />
+    <ClCompile Include="ViewModels\MainViewModel.cpp" />
+    <ClCompile Include="ViewModels\ObservableMixin.ixx" />
+    <ClCompile Include="Core\AppSettingsDatabase.cpp" />
+    <ClCompile Include="Core\AppSettingsDatabase.ixx" />
+    <ClCompile Include="Core\IO\FileSystem.cpp" />
+    <ClCompile Include="Core\IO\FileSystem.ixx" />
+    <ClCompile Include="Core\AppEnvironment.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="App.xaml.h">
+      <DependentUpon>App.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Window\MainWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Window\MainWindow.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Page\MainView.xaml.h">
+      <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ToolKind.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ToolCommand.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ToolRegistry.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="Integration\AdapterContracts.h">
+      <Filter>Integration</Filter>
+    </ClInclude>
+    <ClInclude Include="Integration\ClangdAdapter.h">
+      <Filter>Integration</Filter>
+    </ClInclude>
+    <ClInclude Include="Integration\GitAdapter.h">
+      <Filter>Integration</Filter>
+    </ClInclude>
+    <ClInclude Include="Integration\MSBuildAdapter.h">
+      <Filter>Integration</Filter>
+    </ClInclude>
+    <ClInclude Include="Integration\VcpkgAdapter.h">
+      <Filter>Integration</Filter>
+    </ClInclude>
+    <ClInclude Include="Integration\NuGetAdapter.h">
+      <Filter>Integration</Filter>
+    </ClInclude>
+    <ClInclude Include="Integration\DebugAdapter.h">
+      <Filter>Integration</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\WindowHelper.h" />
+    <ClInclude Include="Core\AppEnvironment.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{1e74df44-c57b-45bd-84d5-128f94d88a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{8c212749-1104-4f4d-bf20-4ecb83afc8cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml">
+      <UniqueIdentifier>{72ef8af6-8211-454e-9b9c-9aa4f535d0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\View">
+      <UniqueIdentifier>{0890a8b2-9afd-4f64-9140-7c892515b14f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\View\Window">
+      <UniqueIdentifier>{f2a18ad9-6a68-47a2-b119-50c5bd7784ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\View\Page">
+      <UniqueIdentifier>{e5a531f9-b251-4747-a688-0418f17a6bf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tool">
+      <UniqueIdentifier>{ce9c78cf-a02e-4308-9e75-c5cd80bde429}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Integration">
+      <UniqueIdentifier>{d451a098-0ecd-4c81-96ca-85c093125c2d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="UI\Xaml\View\Window\MainWindow.idl">
+      <DependentUpon>UI\Xaml\View\Window\MainWindow.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Window</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Page\MainView.idl">
+      <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Page</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
+  </ItemGroup>
+</Project>

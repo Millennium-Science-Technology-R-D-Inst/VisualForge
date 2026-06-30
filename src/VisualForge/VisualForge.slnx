@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="VisualForge/VisualForge.vcxproj" Id="1e74df44-c57b-45bd-84d5-128f94d88a52">
+    <Deploy />
+  </Project>
+</Solution>

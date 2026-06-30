@@ -1,0 +1,9 @@
+﻿namespace VisualForge.UI.Xaml.View.Page
+{
+    [default_interface]
+    runtimeclass MainView : Microsoft.UI.Xaml.Controls.Page
+    {
+        MainView();
+
+    }
+}
