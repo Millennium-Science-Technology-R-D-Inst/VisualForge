@@ -1,10 +1,22 @@
 #pragma once
 
 #include "Integration/AdapterContracts.h"
+#include "Tool/ProcessSession.h"
 #include "Tool/ToolRegistry.h"
 
 namespace VisualForge::Integration
 {
+    struct MSBuildEvaluationResult
+    {
+        bool Started{ false };
+        bool Completed{ false };
+        unsigned long ExitCode{ 0 };
+        std::filesystem::path EvaluationXmlPath;
+        std::filesystem::path CompileCommandsPath;
+        std::string Output;
+        std::string Error;
+    };
+
     class MSBuildAdapter final
     {
     public:
@@ -14,7 +26,9 @@ namespace VisualForge::Integration
         [[nodiscard]] Tool::ToolCommand CreateRestoreCommand(ProjectContext const& context) const;
         [[nodiscard]] Tool::ToolCommand CreateBuildCommand(ProjectContext const& context) const;
         [[nodiscard]] Tool::ToolCommand CreateGenerateCompileCommandsCommand(ProjectContext const& context) const;
+        [[nodiscard]] Tool::ToolCommand CreateEvaluationCommand(ProjectContext const& context, std::filesystem::path outputPath = {}) const;
         [[nodiscard]] CommandPlan CreateLanguageServicePreparationPlan(ProjectContext const& context) const;
+        [[nodiscard]] MSBuildEvaluationResult EvaluateProject(ProjectContext const& context, unsigned long timeoutMs = 30000) const;
 
     private:
         [[nodiscard]] static std::filesystem::path SelectBuildPath(ProjectContext const& context);

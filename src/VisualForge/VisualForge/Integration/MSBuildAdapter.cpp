@@ -4,6 +4,39 @@
 
 namespace VisualForge::Integration
 {
+    namespace
+    {
+        std::filesystem::path FindCompileCommands(std::filesystem::path const& root)
+        {
+            if (root.empty() || !std::filesystem::exists(root))
+            {
+                return {};
+            }
+
+            auto const direct = root / L"compile_commands.json";
+            if (std::filesystem::exists(direct))
+            {
+                return direct;
+            }
+
+            std::error_code error;
+            for (auto const& entry : std::filesystem::recursive_directory_iterator{ root, std::filesystem::directory_options::skip_permission_denied, error })
+            {
+                if (error)
+                {
+                    break;
+                }
+
+                if (entry.path().filename() == L"compile_commands.json")
+                {
+                    return entry.path();
+                }
+            }
+
+            return {};
+        }
+    }
+
     MSBuildAdapter::MSBuildAdapter(Tool::ToolRegistry registry) :
         m_registry(std::move(registry))
     {
@@ -63,16 +96,68 @@ namespace VisualForge::Integration
         return m_registry.CreateCommand(Tool::ToolKind::MSBuild, std::move(arguments), context.WorkspaceRoot, L"Generate compile_commands.json");
     }
 
+    Tool::ToolCommand MSBuildAdapter::CreateEvaluationCommand(ProjectContext const& context, std::filesystem::path outputPath) const
+    {
+        auto buildPath = SelectBuildPath(context);
+        if (outputPath.empty())
+        {
+            outputPath = context.WorkspaceRoot / L".visualforge" / L"msbuild-evaluation.xml";
+        }
+
+        std::vector<std::wstring> arguments{
+            buildPath.wstring(),
+            L"/nologo",
+            L"/pp:" + outputPath.wstring(),
+            L"/p:GenerateCompileCommands=true",
+            L"/p:SkipCompilerExecution=true"
+        };
+
+        auto properties = CreateConfigurationProperties(context);
+        arguments.insert(arguments.end(), properties.begin(), properties.end());
+
+        return m_registry.CreateCommand(Tool::ToolKind::MSBuild, std::move(arguments), context.WorkspaceRoot, L"Evaluate MSBuild property graph");
+    }
+
     CommandPlan MSBuildAdapter::CreateLanguageServicePreparationPlan(ProjectContext const& context) const
     {
         return {
             L"Prepare C++ language service",
-            L"Restore the MSBuild graph, generate compile_commands.json, then start clangd.",
+            L"Restore the MSBuild graph, evaluate imported props/targets, generate compile_commands.json, then start clangd.",
             {
                 CreateRestoreCommand(context),
+                CreateEvaluationCommand(context),
                 CreateGenerateCompileCommandsCommand(context)
             }
         };
+    }
+
+    MSBuildEvaluationResult MSBuildAdapter::EvaluateProject(ProjectContext const& context, unsigned long timeoutMs) const
+    {
+        auto outputPath = context.WorkspaceRoot / L".visualforge" / L"msbuild-evaluation.xml";
+        if (!outputPath.parent_path().empty())
+        {
+            std::filesystem::create_directories(outputPath.parent_path());
+        }
+
+        auto command = CreateEvaluationCommand(context, outputPath);
+        Tool::ProcessSession process;
+        MSBuildEvaluationResult result;
+        result.EvaluationXmlPath = outputPath;
+        result.Started = process.Start(command);
+        if (!result.Started)
+        {
+            return result;
+        }
+
+        result.Completed = process.WaitForExit(timeoutMs);
+        auto snapshot = process.Snapshot();
+        result.ExitCode = snapshot.ExitCode;
+        result.Output = std::move(snapshot.StdOut);
+        result.Error = std::move(snapshot.StdErr);
+        result.CompileCommandsPath = FindCompileCommands(context.CompileCommandsDirectory.empty()
+            ? context.WorkspaceRoot
+            : context.CompileCommandsDirectory);
+        return result;
     }
 
     std::filesystem::path MSBuildAdapter::SelectBuildPath(ProjectContext const& context)

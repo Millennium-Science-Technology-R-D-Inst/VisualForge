@@ -124,7 +124,36 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\AppEnvironment.h" />
+    <ClInclude Include="EditorCore\Cursor\CursorManager.h" />
+    <ClInclude Include="EditorCore\DAP\DapClient.h" />
+    <ClInclude Include="EditorCore\DAP\DapProtocol.h" />
+    <ClInclude Include="EditorCore\Document\DocumentManager.h" />
+    <ClInclude Include="EditorCore\Document\TextDocument.h" />
+    <ClInclude Include="EditorCore\Editing\EditCommand.h" />
+    <ClInclude Include="EditorCore\Editing\EditHistory.h" />
+    <ClInclude Include="EditorCore\EditorView\EditorControl.h" />
+    <ClInclude Include="EditorCore\Input\EditorInputController.h" />
+    <ClInclude Include="EditorCore\Layout\GlyphRunCache.h" />
+    <ClInclude Include="EditorCore\Layout\LineLayoutEngine.h" />
+    <ClInclude Include="EditorCore\Layout\TextLine.h" />
+    <ClInclude Include="EditorCore\LSP\JsonRpc.h" />
+    <ClInclude Include="EditorCore\LSP\LspClient.h" />
+    <ClInclude Include="EditorCore\LSP\LspProtocol.h" />
+    <ClInclude Include="EditorCore\Protocol\JsonMessageSummary.h" />
+    <ClInclude Include="EditorCore\Rendering\DirectWriteContext.h" />
+    <ClInclude Include="EditorCore\Rendering\EditorRenderer.h" />
+    <ClInclude Include="EditorCore\Search\SearchEngine.h" />
+    <ClInclude Include="EditorCore\TextModel\PieceTable.h" />
+    <ClInclude Include="EditorCore\TextModel\TextBuffer.h" />
+    <ClInclude Include="EditorCore\TextModel\TextSnapshot.h" />
+    <ClInclude Include="EditorCore\Viewport\ViewportController.h" />
+    <ClInclude Include="EditorCore\Viewport\VisibleRange.h" />
     <ClInclude Include="Helpers\WindowHelper.h" />
+    <ClInclude Include="IDE\Runtime\IdeRuntimeState.h" />
+    <ClInclude Include="IDE\Shell\DockingLayout.h" />
+    <ClInclude Include="IDE\Shell\FloatingWindowHost.h" />
+    <ClInclude Include="IDE\Shell\ShellLayout.h" />
+    <ClInclude Include="IDE\Shell\ShellWorkspace.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -138,6 +167,7 @@
     <ClInclude Include="Integration\VcpkgAdapter.h" />
     <ClInclude Include="Tool\ToolCommand.h" />
     <ClInclude Include="Tool\ToolKind.h" />
+    <ClInclude Include="Tool\ProcessSession.h" />
     <ClInclude Include="Tool\ToolRegistry.h" />
     <ClInclude Include="UI\Xaml\View\Page\MainView.xaml.h">
       <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>
@@ -165,7 +195,37 @@
     <ClCompile Include="Core\AppSettingsDatabase.ixx" />
     <ClCompile Include="Core\IO\FileSystem.cpp" />
     <ClCompile Include="Core\IO\FileSystem.ixx" />
+    <ClCompile Include="EditorCore\Cursor\CursorManager.cpp" />
+    <ClCompile Include="EditorCore\DAP\DapClient.cpp" />
+    <ClCompile Include="EditorCore\DAP\DapProtocol.cpp" />
+    <ClCompile Include="EditorCore\Document\DocumentManager.cpp" />
+    <ClCompile Include="EditorCore\Document\TextDocument.cpp" />
+    <ClCompile Include="EditorCore\Editing\EditHistory.cpp" />
+    <ClCompile Include="EditorCore\EditorView\EditorControl.cpp" />
+    <ClCompile Include="EditorCore\Input\EditorInputController.cpp" />
+    <ClCompile Include="EditorCore\Layout\GlyphRunCache.cpp" />
+    <ClCompile Include="EditorCore\Layout\LineLayoutEngine.cpp" />
+    <ClCompile Include="EditorCore\LSP\JsonRpc.cpp" />
+    <ClCompile Include="EditorCore\LSP\LspClient.cpp" />
+    <ClCompile Include="EditorCore\LSP\LspProtocol.cpp" />
+    <ClCompile Include="EditorCore\Protocol\JsonMessageSummary.cpp" />
+    <ClCompile Include="EditorCore\Rendering\DirectWriteContext.cpp" />
+    <ClCompile Include="EditorCore\Rendering\EditorRenderer.cpp" />
+    <ClCompile Include="EditorCore\Search\SearchEngine.cpp" />
+    <ClCompile Include="EditorCore\TextModel\PieceTable.cpp" />
+    <ClCompile Include="EditorCore\TextModel\TextBuffer.cpp" />
+    <ClCompile Include="EditorCore\TextModel\TextSnapshot.cpp" />
+    <ClCompile Include="EditorCore\Viewport\ViewportController.cpp" />
+    <ClCompile Include="Helpers\ColumnWidthHelper.ixx" />
+    <ClCompile Include="Helpers\ControlLengthHelper.ixx" />
+    <ClCompile Include="Helpers\ThemeHelper.cpp" />
+    <ClCompile Include="Helpers\ThemeHelper.ixx" />
     <ClCompile Include="Helpers\WindowHelper.cpp" />
+    <ClCompile Include="IDE\Runtime\IdeRuntimeState.cpp" />
+    <ClCompile Include="IDE\Shell\DockingLayout.cpp" />
+    <ClCompile Include="IDE\Shell\FloatingWindowHost.cpp" />
+    <ClCompile Include="IDE\Shell\ShellLayout.cpp" />
+    <ClCompile Include="IDE\Shell\ShellWorkspace.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -180,6 +240,7 @@
     <ClCompile Include="Integration\VcpkgAdapter.cpp" />
     <ClCompile Include="Tool\ToolCommand.cpp" />
     <ClCompile Include="Tool\ToolKind.cpp" />
+    <ClCompile Include="Tool\ProcessSession.cpp" />
     <ClCompile Include="Tool\ToolRegistry.cpp" />
     <ClCompile Include="UI\Xaml\View\Page\MainView.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>

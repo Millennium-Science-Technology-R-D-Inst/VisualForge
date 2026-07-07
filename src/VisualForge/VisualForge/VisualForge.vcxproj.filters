@@ -57,6 +57,89 @@
     <ClCompile Include="Core\IO\FileSystem.cpp" />
     <ClCompile Include="Core\IO\FileSystem.ixx" />
     <ClCompile Include="Core\AppEnvironment.cpp" />
+    <ClCompile Include="IDE\Shell\ShellLayout.cpp">
+      <Filter>IDE\Shell</Filter>
+    </ClCompile>
+    <ClCompile Include="IDE\Shell\DockingLayout.cpp">
+      <Filter>IDE\Shell</Filter>
+    </ClCompile>
+    <ClCompile Include="IDE\Shell\ShellWorkspace.cpp">
+      <Filter>IDE\Shell</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\TextModel\PieceTable.cpp">
+      <Filter>EditorCore\TextModel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\TextModel\TextBuffer.cpp">
+      <Filter>EditorCore\TextModel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\TextModel\TextSnapshot.cpp">
+      <Filter>EditorCore\TextModel</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Layout\LineLayoutEngine.cpp">
+      <Filter>EditorCore\Layout</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Layout\GlyphRunCache.cpp">
+      <Filter>EditorCore\Layout</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Viewport\ViewportController.cpp">
+      <Filter>EditorCore\Viewport</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Cursor\CursorManager.cpp">
+      <Filter>EditorCore\Cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Editing\EditHistory.cpp">
+      <Filter>EditorCore\Editing</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\LSP\JsonRpc.cpp">
+      <Filter>EditorCore\LSP</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\LSP\LspClient.cpp">
+      <Filter>EditorCore\LSP</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Document\TextDocument.cpp">
+      <Filter>EditorCore\Document</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Document\DocumentManager.cpp">
+      <Filter>EditorCore\Document</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Rendering\EditorRenderer.cpp">
+      <Filter>EditorCore\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\EditorView\EditorControl.cpp">
+      <Filter>EditorCore\EditorView</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\DAP\DapClient.cpp">
+      <Filter>EditorCore\DAP</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\DAP\DapProtocol.cpp">
+      <Filter>EditorCore\DAP</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\LSP\LspProtocol.cpp">
+      <Filter>EditorCore\LSP</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Protocol\JsonMessageSummary.cpp">
+      <Filter>EditorCore\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Rendering\DirectWriteContext.cpp">
+      <Filter>EditorCore\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="IDE\Shell\FloatingWindowHost.cpp">
+      <Filter>IDE\Shell</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool\ProcessSession.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Search\SearchEngine.cpp">
+      <Filter>EditorCore\Search</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorCore\Input\EditorInputController.cpp">
+      <Filter>EditorCore\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="IDE\Runtime\IdeRuntimeState.cpp" />
+    <ClCompile Include="Helpers\ColumnWidthHelper.ixx" />
+    <ClCompile Include="Helpers\ControlLengthHelper.ixx" />
+    <ClCompile Include="Helpers\ThemeHelper.cpp" />
+    <ClCompile Include="Helpers\ThemeHelper.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -103,6 +186,94 @@
     </ClInclude>
     <ClInclude Include="Helpers\WindowHelper.h" />
     <ClInclude Include="Core\AppEnvironment.h" />
+    <ClInclude Include="IDE\Shell\ShellLayout.h">
+      <Filter>IDE\Shell</Filter>
+    </ClInclude>
+    <ClInclude Include="IDE\Shell\DockingLayout.h">
+      <Filter>IDE\Shell</Filter>
+    </ClInclude>
+    <ClInclude Include="IDE\Shell\ShellWorkspace.h">
+      <Filter>IDE\Shell</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\TextModel\PieceTable.h">
+      <Filter>EditorCore\TextModel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\TextModel\TextBuffer.h">
+      <Filter>EditorCore\TextModel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\TextModel\TextSnapshot.h">
+      <Filter>EditorCore\TextModel</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Layout\TextLine.h">
+      <Filter>EditorCore\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Layout\LineLayoutEngine.h">
+      <Filter>EditorCore\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Layout\GlyphRunCache.h">
+      <Filter>EditorCore\Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Viewport\VisibleRange.h">
+      <Filter>EditorCore\Viewport</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Viewport\ViewportController.h">
+      <Filter>EditorCore\Viewport</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Cursor\CursorManager.h">
+      <Filter>EditorCore\Cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Editing\EditCommand.h">
+      <Filter>EditorCore\Editing</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Editing\EditHistory.h">
+      <Filter>EditorCore\Editing</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\LSP\JsonRpc.h">
+      <Filter>EditorCore\LSP</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\LSP\LspClient.h">
+      <Filter>EditorCore\LSP</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Document\TextDocument.h">
+      <Filter>EditorCore\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Document\DocumentManager.h">
+      <Filter>EditorCore\Document</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Rendering\DirectWriteContext.h">
+      <Filter>EditorCore\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Rendering\EditorRenderer.h">
+      <Filter>EditorCore\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\EditorView\EditorControl.h">
+      <Filter>EditorCore\EditorView</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\DAP\DapClient.h">
+      <Filter>EditorCore\DAP</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\DAP\DapProtocol.h">
+      <Filter>EditorCore\DAP</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\LSP\LspProtocol.h">
+      <Filter>EditorCore\LSP</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Protocol\JsonMessageSummary.h">
+      <Filter>EditorCore\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="IDE\Shell\FloatingWindowHost.h">
+      <Filter>IDE\Shell</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool\ProcessSession.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Search\SearchEngine.h">
+      <Filter>EditorCore\Search</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCore\Input\EditorInputController.h">
+      <Filter>EditorCore\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="IDE\Runtime\IdeRuntimeState.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
@@ -151,6 +322,54 @@
     </Filter>
     <Filter Include="Integration">
       <UniqueIdentifier>{d451a098-0ecd-4c81-96ca-85c093125c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDE">
+      <UniqueIdentifier>{9ec9001b-43cc-49a2-b9f5-2c760f4ed078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IDE\Shell">
+      <UniqueIdentifier>{4fe58404-6bb8-49cf-9bc9-0b29ff5026b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore">
+      <UniqueIdentifier>{d4c56e7c-4607-47ea-afb4-93dddf18b84f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\TextModel">
+      <UniqueIdentifier>{396fc971-1797-427d-b432-d19c6d0f482d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Layout">
+      <UniqueIdentifier>{28c38012-f03b-4db9-965e-b717c69f6477}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Viewport">
+      <UniqueIdentifier>{1e95fdfb-5621-4ec1-8784-5d2da163fda4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Cursor">
+      <UniqueIdentifier>{2d55d137-bc94-4702-ac55-c8ea19758a68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Editing">
+      <UniqueIdentifier>{184c6d2b-b54b-42c1-9757-455f41a4f8cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\LSP">
+      <UniqueIdentifier>{4ca1e7ed-babc-4d45-9593-6c366d06b7e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Document">
+      <UniqueIdentifier>{d9fb2ccd-0457-457d-9ca9-51be9c3d117f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Rendering">
+      <UniqueIdentifier>{6e7cd984-41a4-4477-a411-016f076c7f72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\EditorView">
+      <UniqueIdentifier>{77825cad-7717-4897-92f5-5c78dfe8f6c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Search">
+      <UniqueIdentifier>{60cf0b6a-d2fd-46a7-85ee-0e9f7d35a6c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Input">
+      <UniqueIdentifier>{88af7e28-232f-483f-a2e7-ee1c518927a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\DAP">
+      <UniqueIdentifier>{391e20c4-957e-459c-a34f-15d1030f0381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="EditorCore\Protocol">
+      <UniqueIdentifier>{a34c9562-9940-4d38-b9e9-4d7014f359a4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

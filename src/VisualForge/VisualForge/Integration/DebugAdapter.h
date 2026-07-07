@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Integration/AdapterContracts.h"
+#include "EditorCore/DAP/DapClient.h"
 #include "Tool/ToolRegistry.h"
 
 namespace VisualForge::Integration
@@ -21,6 +22,9 @@ namespace VisualForge::Integration
         [[nodiscard]] AdapterSnapshot Describe() const;
         [[nodiscard]] Tool::ToolCommand CreateDebugAdapterCommand(std::filesystem::path const& workingDirectory) const;
         [[nodiscard]] std::wstring CreateLaunchRequest(DebugLaunchProfile const& profile) const;
+        [[nodiscard]] EditorCore::DAP::DapClient CreateClient(
+            std::filesystem::path const& lldbDapPath,
+            std::filesystem::path const& workingDirectory) const;
 
     private:
         [[nodiscard]] static std::wstring JsonEscape(std::wstring_view value);

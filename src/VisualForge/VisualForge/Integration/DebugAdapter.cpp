@@ -43,6 +43,16 @@ namespace VisualForge::Integration
         return request;
     }
 
+    EditorCore::DAP::DapClient DebugAdapter::CreateClient(
+        std::filesystem::path const& lldbDapPath,
+        std::filesystem::path const& workingDirectory) const
+    {
+        EditorCore::DAP::DapClient client;
+        auto const started = client.Start(lldbDapPath.wstring(), workingDirectory);
+        (void)started;
+        return client;
+    }
+
     std::wstring DebugAdapter::JsonEscape(std::wstring_view value)
     {
         std::wstring escaped;

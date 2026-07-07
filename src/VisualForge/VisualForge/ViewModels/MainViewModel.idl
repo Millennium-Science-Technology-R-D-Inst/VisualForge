@@ -1,9 +1,19 @@
-﻿namespace VisualForge.ViewModels
+namespace VisualForge.ViewModels
 {
     [default_interface]
     runtimeclass MainViewModel : Microsoft.UI.Xaml.Controls.Control
     {
         MainViewModel();
 
+        String LanguageServiceStatus { get; };
+        String BuildStatus { get; };
+        String DebugStatus { get; };
+        String ProblemsStatus { get; };
+        String OutputPreview { get; };
+
+        String ToolWindowTitle(String contentId);
+        String ToolWindowState(String contentId);
+        void RefreshDesignTimeStatus();
+        void Shutdown();
     }
 }

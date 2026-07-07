@@ -1,9 +1,21 @@
-﻿namespace VisualForge.UI.Xaml.View.Page
+﻿import "ViewModels/MainViewModel.idl";
+
+namespace VisualForge.UI.Xaml.View.Page
 {
     [default_interface]
     runtimeclass MainView : Microsoft.UI.Xaml.Controls.Page
     {
         MainView();
 
+        Microsoft.UI.Xaml.Visibility IsDebug{ get; };
+        VisualForge.ViewModels.MainViewModel ViewModel{ get; };
+
+        event Windows.Foundation.TypedEventHandler<Object, Boolean> CanGoBackChanged;
+
+        void Navigate(String tag);
+        void GoBack();
+        void GoForward();
+        Boolean CanGoBack();
+        Boolean CanGoForward();
     }
 }
