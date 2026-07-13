@@ -128,7 +128,7 @@ namespace VisualForge::EditorCore::Rendering
         }
 
         winrt::com_ptr<IUnknown> factoryUnknown;
-        if (FAILED(DWriteCreateFactory(
+        if (FAILED(DWriteCoreCreateFactory(
             DWRITE_FACTORY_TYPE_SHARED,
             __uuidof(IDWriteFactory),
             factoryUnknown.put())))

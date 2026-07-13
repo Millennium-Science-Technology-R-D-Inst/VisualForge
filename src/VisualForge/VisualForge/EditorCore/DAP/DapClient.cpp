@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 
 #include "EditorCore/DAP/DapClient.h"
 
@@ -8,6 +8,10 @@ namespace VisualForge::EditorCore::DAP
 {
     bool DapClient::Start(std::wstring lldbDapPath, std::filesystem::path workingDirectory)
     {
+        m_nextSequence = 1;
+        m_sentMessages.clear();
+        m_stdoutBytesConsumed = 0;
+        m_parser.Clear();
         Tool::ToolCommand command;
         command.Kind = Tool::ToolKind::LLDB;
         command.Executable = std::move(lldbDapPath);
@@ -47,11 +51,11 @@ namespace VisualForge::EditorCore::DAP
     void DapClient::Launch(std::wstring const& program, std::wstring const& arguments, std::wstring const& cwd, bool stopAtEntry)
     {
         Send(R"({"seq":)" + std::to_string(NextSequence())
-            + R"(,"type":"request","command":"launch","arguments":{"program":")" + Narrow(program)
-            + R"(","args":")" + Narrow(arguments)
-            + R"(","cwd":")" + Narrow(cwd)
-            + R"(","stopOnEntry":)" + (stopAtEntry ? "true" : "false")
-            + R"(}})");
+             + R"(,"type":"request","command":"launch","arguments":{"program":")" + Narrow(program)
+             + R"(","args":)" + (arguments.empty() ? "[]" : Narrow(arguments))
+             + R"(","cwd":")" + Narrow(cwd)
+             + R"(","stopOnEntry":)" + (stopAtEntry ? "true" : "false")
+             + R"(}})");
     }
 
     void DapClient::SetBreakpoints(std::wstring const& sourcePath, std::vector<int> const& lines)
@@ -68,9 +72,9 @@ namespace VisualForge::EditorCore::DAP
         }
 
         Send(R"({"seq":)" + std::to_string(NextSequence())
-            + R"(,"type":"request","command":"setBreakpoints","arguments":{"source":{"path":")" + Narrow(sourcePath)
-            + R"("},"breakpoints":[)" + breakpoints.str()
-            + R"(]}})");
+             + R"(,"type":"request","command":"setBreakpoints","arguments":{"source":{"path":")" + Narrow(sourcePath)
+             + R"("},"breakpoints":[)" + breakpoints.str()
+             + R"(]}})");
     }
 
     void DapClient::Continue(int threadId)
@@ -91,6 +95,21 @@ namespace VisualForge::EditorCore::DAP
     void DapClient::StepOut(int threadId)
     {
         Send(R"({"seq":)" + std::to_string(NextSequence()) + R"(,"type":"request","command":"stepOut","arguments":{"threadId":)" + std::to_string(threadId) + R"(}})");
+    }
+
+    void DapClient::RequestStackTrace(int threadId)
+    {
+        Send(R"({"seq":)" + std::to_string(NextSequence()) + R"(,"type":"request","command":"stackTrace","arguments":{"threadId":)" + std::to_string(threadId) + R"(}})");
+    }
+
+    void DapClient::RequestScopes(int frameId)
+    {
+        Send(R"({"seq":)" + std::to_string(NextSequence()) + R"(,"type":"request","command":"scopes","arguments":{"frameId":)" + std::to_string(frameId) + R"(}})");
+    }
+
+    void DapClient::RequestVariables(int variablesReference)
+    {
+        Send(R"({"seq":)" + std::to_string(NextSequence()) + R"(,"type":"request","command":"variables","arguments":{"variablesReference":)" + std::to_string(variablesReference) + R"(}})");
     }
 
     void DapClient::ConfigurationDone()

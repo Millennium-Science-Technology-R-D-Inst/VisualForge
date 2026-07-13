@@ -30,6 +30,9 @@ namespace VisualForge::EditorCore::DAP
         void Next(int threadId);
         void StepIn(int threadId);
         void StepOut(int threadId);
+        void RequestStackTrace(int threadId);
+        void RequestScopes(int frameId);
+        void RequestVariables(int variablesReference);
         void ConfigurationDone();
         void Disconnect();
 

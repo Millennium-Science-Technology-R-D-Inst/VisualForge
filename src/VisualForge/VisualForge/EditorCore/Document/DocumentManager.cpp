@@ -145,6 +145,21 @@ namespace VisualForge::EditorCore::Document
         return false;
     }
 
+    bool DocumentManager::SaveAs(std::filesystem::path const& oldPath, std::filesystem::path newPath)
+    {
+        auto found = m_documents.find(oldPath.wstring());
+        if (found == m_documents.end())
+        {
+            return false;
+        }
+
+        found->second.SaveAs(newPath);
+        auto node = m_documents.extract(found);
+        node.key() = newPath.wstring();
+        m_documents.insert(std::move(node));
+        return true;
+    }
+
     bool DocumentManager::Close(std::filesystem::path const& path)
     {
         return m_documents.erase(path.wstring()) > 0;

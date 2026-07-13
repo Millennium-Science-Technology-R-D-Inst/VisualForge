@@ -62,6 +62,26 @@ namespace VisualForge::IDE::Shell
         return m_toolWindowStates;
     }
 
+    WorkspaceMode ShellWorkspace::Mode() const noexcept
+    {
+        return m_mode;
+    }
+
+    void ShellWorkspace::SetMode(WorkspaceMode mode) noexcept
+    {
+        m_mode = mode;
+    }
+
+    WorkspaceLayoutProfile const& ShellWorkspace::Profile(WorkspaceMode mode) const noexcept
+    {
+        return mode == WorkspaceMode::Debugging ? m_debuggingProfile : m_editingProfile;
+    }
+
+    WorkspaceLayoutProfile& ShellWorkspace::Profile(WorkspaceMode mode) noexcept
+    {
+        return mode == WorkspaceMode::Debugging ? m_debuggingProfile : m_editingProfile;
+    }
+
     std::optional<ToolWindowRuntimeState> ShellWorkspace::FindToolWindowState(std::wstring const& contentId) const
     {
         auto found = std::find_if(m_toolWindowStates.begin(), m_toolWindowStates.end(), [&](ToolWindowRuntimeState const& item)
@@ -117,5 +137,10 @@ namespace VisualForge::IDE::Shell
                 content.State != DockState::AutoHidden
             });
         }
+    }
+
+    std::wstring_view ToWorkspaceModeName(WorkspaceMode mode) noexcept
+    {
+        return mode == WorkspaceMode::Debugging ? L"Debugging" : L"Editing";
     }
 }

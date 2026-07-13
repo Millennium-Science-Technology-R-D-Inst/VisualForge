@@ -1,0 +1,10 @@
+namespace VisualForge.UI.Xaml.View.Control
+{
+    [default_interface]
+    runtimeclass SolutionExplorerControl : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        SolutionExplorerControl();
+        void LoadWorkspace(String rootPath, String solutionPath);
+        event Windows.Foundation.TypedEventHandler<Object, String> FileOpenRequested;
+    }
+}

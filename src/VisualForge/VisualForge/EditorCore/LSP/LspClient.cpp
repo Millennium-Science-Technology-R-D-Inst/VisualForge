@@ -4,9 +4,18 @@
 
 namespace VisualForge::EditorCore::LSP
 {
-    void LspClient::Start(std::wstring clangdPath)
+    void LspClient::Start(
+        std::wstring clangdPath,
+        std::filesystem::path workingDirectory,
+        std::filesystem::path compileCommandsDirectory)
     {
+        Stop();
         m_clangdPath = std::move(clangdPath);
+        m_workingDirectory = std::move(workingDirectory);
+        m_compileCommandsDirectory = std::move(compileCommandsDirectory);
+        m_documentVersion = 0;
+        m_stdoutBytesConsumed = 0;
+        m_nextRequestId = 10;
         m_state = m_clangdPath.empty() ? LspClientState::Faulted : LspClientState::Starting;
         if (m_state == LspClientState::Starting)
         {
@@ -18,6 +27,11 @@ namespace VisualForge::EditorCore::LSP
                 L"--clang-tidy",
                 L"--completion-style=detailed"
             };
+            if (!m_compileCommandsDirectory.empty())
+            {
+                command.Arguments.push_back(L"--compile-commands-dir=" + m_compileCommandsDirectory.wstring());
+            }
+            command.WorkingDirectory = m_workingDirectory;
             command.DisplayName = L"clangd language server";
 
             m_process = std::make_unique<Tool::ProcessSession>();
@@ -56,7 +70,9 @@ namespace VisualForge::EditorCore::LSP
             + Narrow(uri)
             + R"(","languageId":")"
             + Narrow(languageId)
-            + R"(","version":1,"text":")"
+            + R"(","version":)"
+            + std::to_string(++m_documentVersion)
+            + R"(,"text":")"
             + Narrow(text)
             + R"("}}})";
         SendJson(std::move(payload));
@@ -64,22 +80,62 @@ namespace VisualForge::EditorCore::LSP
 
     void LspClient::DidChange(std::wstring const& uri, std::wstring const& text)
     {
-        auto payload = std::string{ R"({"jsonrpc":"2.0","method":"textDocument/didChange","params":{"textDocument":{"uri":")" }
+        auto payload = std::string{ R"({"jsonrpc":"2.0","method":"textDocument/didChange","params":{"textDocument":{"uri":")"
             + Narrow(uri)
-            + R"(","version":2},"contentChanges":[{"text":")"
+            + R"(","version":)"
+            + std::to_string(++m_documentVersion)
+            + R"(},"contentChanges":[{"text":")"
             + Narrow(text)
-            + R"("}]}})";
+            + R"("}]}})" };
         SendJson(std::move(payload));
     }
 
-    void LspClient::RequestCompletion(std::size_t line, std::size_t column)
+    int LspClient::RequestCompletion(std::wstring const& uri, std::size_t line, std::size_t column)
     {
-        auto payload = std::string{ R"({"jsonrpc":"2.0","id":3,"method":"textDocument/completion","params":{"position":{"line":)" }
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/completion","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("},"position":{"line":)"
             + std::to_string(line)
             + R"(,"character":)"
             + std::to_string(column)
-            + R"(}}})";
+            + R"(}}}})" };
         SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestHover(std::wstring const& uri, std::size_t line, std::size_t column)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/hover","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("},"position":{"line":)"
+            + std::to_string(line)
+            + R"(,"character":)"
+            + std::to_string(column)
+            + R"(}}}})" };
+        SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestDefinition(std::wstring const& uri, std::size_t line, std::size_t column)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/definition","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("},"position":{"line":)"
+            + std::to_string(line)
+            + R"(,"character":)"
+            + std::to_string(column)
+            + R"(}}}})" };
+        SendJson(std::move(payload));
+        return requestId;
     }
 
     std::vector<JsonRpcMessage> LspClient::DrainReceivedMessages()
@@ -142,25 +198,56 @@ namespace VisualForge::EditorCore::LSP
 
     std::string LspClient::Narrow(std::wstring const& value)
     {
-        std::string result;
-        result.reserve(value.size());
-        for (auto character : value)
+        if (value.empty())
         {
-            if (character == L'\\')
+            return {};
+        }
+
+        auto const required = WideCharToMultiByte(
+            CP_UTF8,
+            0,
+            value.data(),
+            static_cast<int>(value.size()),
+            nullptr,
+            0,
+            nullptr,
+            nullptr);
+        std::string utf8(static_cast<std::size_t>(required), '\0');
+        WideCharToMultiByte(
+            CP_UTF8,
+            0,
+            value.data(),
+            static_cast<int>(value.size()),
+            utf8.data(),
+            required,
+            nullptr,
+            nullptr);
+
+        std::string result;
+        result.reserve(utf8.size() + 8);
+        for (auto const character : utf8)
+        {
+            switch (static_cast<unsigned char>(character))
             {
-                result += "\\\\";
-            }
-            else if (character == L'"')
-            {
-                result += "\\\"";
-            }
-            else if (character < 0x80)
-            {
-                result.push_back(static_cast<char>(character));
-            }
-            else
-            {
-                result.push_back('?');
+            case '\\': result += "\\\\"; break;
+            case '"': result += "\\\""; break;
+            case '\n': result += "\\n"; break;
+            case '\r': result += "\\r"; break;
+            case '\t': result += "\\t"; break;
+            case '\b': result += "\\b"; break;
+            case '\f': result += "\\f"; break;
+            default:
+                if (static_cast<unsigned char>(character) < 0x20)
+                {
+                    char buffer[7]{};
+                    sprintf_s(buffer, "\\u%04x", static_cast<unsigned char>(character));
+                    result += buffer;
+                }
+                else
+                {
+                    result.push_back(character);
+                }
+                break;
             }
         }
 

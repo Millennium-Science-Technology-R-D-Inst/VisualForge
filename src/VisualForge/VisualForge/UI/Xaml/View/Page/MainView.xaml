@@ -5,6 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:controls="using:VisualForge.UI.Xaml.View.Control"
+    xmlns:editor="using:VisualForge.UI.Xaml.View.Control"
     xmlns:local="using:VisualForge.UI.Xaml.View.Page"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xtwc="using:XamlToolkit.WinUI.Controls"
@@ -12,6 +14,22 @@
     Loaded="Page_Loaded"
     PointerPressed="RootPage_PointerPressed"
     mc:Ignorable="d">
+
+    <Page.KeyboardAccelerators>
+        <KeyboardAccelerator Key="S" Modifiers="Control" Invoked="SaveKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="NewFileKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="S" Modifiers="Control,Shift" Invoked="SaveAsKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="Z" Modifiers="Control" Invoked="UndoKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="Y" Modifiers="Control" Invoked="RedoKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="FindKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="H" Modifiers="Control" Invoked="ReplaceKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="G" Modifiers="Control" Invoked="GoToLineKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="P" Modifiers="Control" Invoked="QuickOpenKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="I" Modifiers="Control" Invoked="HoverKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="F12" Invoked="GoToDefinitionKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="F9" Invoked="ToggleBreakpointKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator Key="F5" Invoked="StartDebuggingKeyboardAccelerator_Invoked" />
+    </Page.KeyboardAccelerators>
 
     <Grid Background="{StaticResource VFEditorBrush}">
         <Grid.RowDefinitions>
@@ -50,19 +68,27 @@
                         Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
                     <MenuBar Background="Transparent">
                         <MenuBarItem Title="File">
+                            <MenuFlyoutItem Text="New File" Click="NewFile_Click" />
                             <MenuFlyoutItem Text="New Project" />
-                            <MenuFlyoutItem Text="Open Folder" />
+                            <MenuFlyoutItem Text="Open Workspace" Click="OpenWorkspace_Click" />
+                            <MenuFlyoutItem Text="Open File" Click="OpenFile_Click" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Save All" />
+                            <MenuFlyoutItem Text="Save" Click="SaveFile_Click" />
+                            <MenuFlyoutItem Text="Save As..." Click="SaveAs_Click" />
+                            <MenuFlyoutItem Text="Save All" Click="SaveAll_Click" />
                             <MenuFlyoutItem Text="Exit" />
                         </MenuBarItem>
                         <MenuBarItem Title="Edit">
-                            <MenuFlyoutItem Text="Undo" />
-                            <MenuFlyoutItem Text="Redo" />
+                            <MenuFlyoutItem Text="Undo" Click="Undo_Click" />
+                            <MenuFlyoutItem Text="Redo" Click="Redo_Click" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Find in Files" />
+                            <MenuFlyoutItem Text="Go To Line" Click="GoToLine_Click" />
+                            <MenuFlyoutItem Text="Find in Files" Click="FindInFiles_Click" />
                         </MenuBarItem>
                         <MenuBarItem Title="View">
+                            <MenuFlyoutItem Text="Editing Layout" Click="EditingLayout_Click" />
+                            <MenuFlyoutItem Text="Debugging Layout" Click="DebuggingLayout_Click" />
+                            <MenuFlyoutSeparator />
                             <MenuFlyoutItem Text="Solution Explorer" />
                             <MenuFlyoutItem Text="Git Changes" />
                             <MenuFlyoutItem Text="Git Repository" />
@@ -85,8 +111,8 @@
                             <MenuFlyoutItem Text="Manage Branches" />
                         </MenuBarItem>
                         <MenuBarItem Title="Debug">
-                            <MenuFlyoutItem Text="Start Debugging" />
-                            <MenuFlyoutItem Text="Start Without Debugging" />
+                            <MenuFlyoutItem Text="Start Debugging" Click="RunProject_Click" />
+                            <MenuFlyoutItem Text="Start Without Debugging" Click="RunProject_Click" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Text="Step Over" />
                             <MenuFlyoutItem Text="Step Into" />
@@ -123,12 +149,15 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <AutoSuggestBox
+                        x:Name="QuickOpenBox"
                         Grid.Column="1"
                         Width="320"
                         Height="Auto"
                         Margin="14,1,0,1"
                         VerticalAlignment="Center"
-                        PlaceholderText="Search" />
+                        PlaceholderText="Search files (Ctrl+P)"
+                        QuerySubmitted="QuickOpenBox_QuerySubmitted"
+                        TextChanged="QuickOpenBox_TextChanged" />
                 </Grid>
 
             </TitleBar.Content>
@@ -164,7 +193,7 @@
         <!--  Title command bar  -->
         <Grid
             Grid.Row="1"
-            MinHeight="30"
+            MinHeight="15"
             Padding="4,0,6,0"
             Background="{StaticResource VFMenuBrush}"
             BorderBrush="{StaticResource VFSoftBorderBrush}"
@@ -189,16 +218,29 @@
                     Background="Transparent"
                     CanDrag="True"
                     DefaultLabelPosition="Right">
-                    <AppBarButton AllowFocusOnInteraction="True" Icon="{essential:FontIcon Glyph=&#xE760;}">
-                        <AppBarButton.Flyout>
-                            <Flyout>
-                                <TextBox MinWidth="240" PlaceholderText="Input text here" />
-                            </Flyout>
-                        </AppBarButton.Flyout>
-                    </AppBarButton>
+                    <AppBarButton
+                        x:Name="EditorInformationNavigationList"
+                        AllowFocusOnInteraction="True"
+                        Icon="{essential:FontIcon Glyph=&#xE760;}" />
                     <AppBarButton AllowFocusOnInteraction="True" Icon="{essential:FontIcon Glyph=&#xE761;}" />
+                    <AppBarButton
+                        AllowFocusOnInteraction="True"
+                        Click="NewFile_Click"
+                        Icon="{essential:FontIcon Glyph=&#xE8A5;}"
+                        ToolTipService.ToolTip="New File (Ctrl+N)" />
+                    <AppBarButton
+                        AllowFocusOnInteraction="True"
+                        Icon="{essential:FontIcon Glyph=&#xF0B2;}"
+                        ToolTipService.ToolTip="New Project Item (Ctrl+Shift+N)" />
+                    <AppBarButton Label="Open" Click="OpenWorkspace_Click" ToolTipService.ToolTip="Open workspace folder">
+                        <AppBarButton.Icon>
+                            <FontIcon Glyph="&#xE8E5;" />
+                        </AppBarButton.Icon>
+                    </AppBarButton>
                 </CommandBar>
                 <xtwc:ContentSizer Grid.Column="1" TargetControl="{x:Bind EditorInformationCommandBar}" />
+
+
             </Grid>
             <StackPanel
                 Grid.Column="3"
@@ -243,23 +285,18 @@
                 DefaultLabelPosition="Collapsed"
                 IsOpen="False"
                 OverflowButtonVisibility="Collapsed">
-                <AppBarButton Label="Open" ToolTipService.ToolTip="Open workspace">
-                    <AppBarButton.Icon>
-                        <FontIcon Glyph="&#xE8E5;" />
-                    </AppBarButton.Icon>
-                </AppBarButton>
-                <AppBarButton Label="Save All" ToolTipService.ToolTip="Save all">
+                <AppBarButton Label="Save All" Click="SaveAll_Click" ToolTipService.ToolTip="Save all open files">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE74E;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarSeparator />
-                <AppBarButton Label="Build" ToolTipService.ToolTip="Build solution">
+                <AppBarButton Label="Build" Click="BuildProject_Click" ToolTipService.ToolTip="Build solution">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton Label="Run" ToolTipService.ToolTip="Start debugging">
+                <AppBarButton Label="Run" Click="RunProject_Click" ToolTipService.ToolTip="Start debugging">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
@@ -283,10 +320,45 @@
             </CommandBar>
 
             <StackPanel
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="6">
+                <AutoSuggestBox
+                    x:Name="FindTextBox"
+                    Width="210"
+                    PlaceholderText="Find"
+                    TextChanged="FindTextBox_TextChanged" />
+                <TextBox x:Name="ReplaceTextBox" Width="150" PlaceholderText="Replace" />
+                <ToggleButton x:Name="MatchCaseToggle" Content="Aa" Checked="FindOptions_Changed" Unchecked="FindOptions_Changed" ToolTipService.ToolTip="Match case" />
+                <ToggleButton x:Name="WholeWordToggle" Content="ab" Checked="FindOptions_Changed" Unchecked="FindOptions_Changed" ToolTipService.ToolTip="Match whole word" />
+                <Button Click="FindPrevious_Click" Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Previous match">
+                    <FontIcon Glyph="&#xE70E;" />
+                </Button>
+                <Button Click="FindNext_Click" Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Next match">
+                    <FontIcon Glyph="&#xE70D;" />
+                </Button>
+                <Button Click="Replace_Click" Padding="8,4" Content="Replace" />
+                <Button Click="ReplaceAll_Click" Padding="8,4" Content="All" />
+                <Button Click="FindInFiles_Click" Padding="8,4" Content="Files" ToolTipService.ToolTip="Find in workspace" />
+                <TextBlock x:Name="FindSummaryText" VerticalAlignment="Center" Style="{StaticResource VFStatusTextBlockStyle}" />
+            </StackPanel>
+
+            <StackPanel
                 Grid.Column="2"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="8">
+                <ComboBox
+                    x:Name="WorkspaceModeComboBox"
+                    Width="124"
+                    Height="28"
+                    SelectionChanged="WorkspaceModeComboBox_SelectionChanged"
+                    SelectedIndex="0">
+                    <ComboBoxItem Content="Editing" />
+                    <ComboBoxItem Content="Debugging" />
+                </ComboBox>
                 <ComboBox
                     Width="132"
                     Height="28"
@@ -468,16 +540,20 @@
 
             <Border Grid.Column="2" Background="{StaticResource VFBorderBrush}" />
 
-            <Grid Grid.Column="3" Background="{StaticResource VFEditorBrush}">
+            <Grid x:Name="EditorWorkspaceGrid" Grid.Column="3" Background="{StaticResource VFEditorBrush}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" MinHeight="420" />
+                    <RowDefinition x:Name="EditorAreaRow" Height="*" MinHeight="260" />
                     <RowDefinition Height="1" />
-                    <RowDefinition Height="245" />
+                    <RowDefinition x:Name="BottomToolRow" Height="245" />
                 </Grid.RowDefinitions>
 
                 <TabView
+                    x:Name="EditorTabs"
                     Grid.Row="0"
+                    CanDragTabs="True"
                     IsAddTabButtonVisible="False"
+                    SelectionChanged="EditorTabs_SelectionChanged"
+                    TabCloseRequested="EditorTabs_TabCloseRequested"
                     TabWidthMode="SizeToContent">
                     <TabViewItem Header="Options">
                         <Grid Background="{StaticResource VFEditorBrush}">
@@ -604,37 +680,57 @@
                             </ScrollViewer>
                         </Grid>
                     </TabViewItem>
-                    <TabViewItem Header="MainView.xaml">
+                    <TabViewItem x:Name="ActiveDocumentTab" Header="MainView.xaml" IsClosable="True">
                         <Grid Background="{StaticResource VFEditorBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="52" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Border
-                                Background="{StaticResource VFDockBrush}"
-                                BorderBrush="{StaticResource VFBorderBrush}"
-                                BorderThickness="0,0,1,0">
-                                <TextBlock
-                                    Margin="0,12,8,0"
-                                    HorizontalAlignment="Right"
-                                    FontFamily="Cascadia Mono"
-                                    FontSize="13"
-                                    Foreground="#8894A5"
-                                    Text="1&#x0a;2&#x0a;3&#x0a;4&#x0a;5&#x0a;6&#x0a;7&#x0a;8&#x0a;9&#x0a;10" />
-                            </Border>
-                            <TextBox
-                                Grid.Column="1"
-                                Padding="12"
-                                AcceptsReturn="True"
-                                Background="{StaticResource VFEditorBrush}"
-                                BorderThickness="0"
-                                FontFamily="Cascadia Mono"
-                                FontSize="13"
-                                Text="&lt;Page x:Class=&quot;VisualForge.UI.Xaml.View.Page.MainView&quot;&gt;&#x0a;    &lt;Grid&gt;&#x0a;        &lt;MenuBar /&gt;&#x0a;        &lt;DockManager /&gt;&#x0a;        &lt;EditorHost /&gt;&#x0a;        &lt;ToolWindowHost /&gt;&#x0a;    &lt;/Grid&gt;&#x0a;&lt;/Page&gt;"
-                                TextWrapping="NoWrap" />
+                            <editor:EditorDocumentControl
+                                x:Name="MainEditorControl"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch" />
                         </Grid>
                     </TabViewItem>
                 </TabView>
+
+                <Popup
+                    x:Name="CompletionPopup"
+                    HorizontalOffset="132"
+                    IsLightDismissEnabled="True"
+                    IsOpen="False"
+                    VerticalOffset="74">
+                    <Border
+                        Width="420"
+                        MaxHeight="280"
+                        Background="{StaticResource VFPanelBrush}"
+                        BorderBrush="{StaticResource VFAccentBrush}"
+                        BorderThickness="1">
+                        <ListView
+                            x:Name="CompletionListView"
+                            SelectionChanged="CompletionListView_SelectionChanged" />
+                    </Border>
+                </Popup>
+
+                <Popup
+                    x:Name="HoverPopup"
+                    HorizontalOffset="132"
+                    IsLightDismissEnabled="True"
+                    IsOpen="False"
+                    VerticalOffset="74">
+                    <Border
+                        Width="560"
+                        MaxHeight="260"
+                        Padding="12"
+                        Background="{StaticResource VFPanelBrush}"
+                        BorderBrush="{StaticResource VFAccentBlueBrush}"
+                        BorderThickness="1">
+                        <ScrollViewer>
+                            <TextBlock
+                                x:Name="HoverTextBlock"
+                                FontFamily="Cascadia Mono"
+                                FontSize="12"
+                                Foreground="#D6DEEB"
+                                TextWrapping="Wrap" />
+                        </ScrollViewer>
+                    </Border>
+                </Popup>
 
                 <Border Grid.Row="1" Background="{StaticResource VFBorderBrush}" />
 
@@ -660,6 +756,7 @@
                             Style="{StaticResource VFDockGlyphTextBlockStyle}"
                             Text="&#xE700;" />
                         <TextBlock
+                            x:Name="BottomToolWindowTitleText"
                             Grid.Column="1"
                             Style="{StaticResource VFDockTitleTextBlockStyle}"
                             Text="Error List - Current Project" />
@@ -705,7 +802,7 @@
                                 BorderBrush="{StaticResource VFDangerBrush}"
                                 BorderThickness="1"
                                 CornerRadius="3">
-                                <TextBlock FontSize="11" Text="0 Errors" />
+                                <TextBlock x:Name="ErrorCountText" FontSize="11" Text="0 Errors" />
                             </Border>
                             <Border
                                 Padding="7,4"
@@ -713,7 +810,7 @@
                                 BorderBrush="{StaticResource VFWarningBrush}"
                                 BorderThickness="1"
                                 CornerRadius="3">
-                                <TextBlock FontSize="11" Text="0 Warnings" />
+                                <TextBlock x:Name="WarningCountText" FontSize="11" Text="0 Warnings" />
                             </Border>
                             <Border
                                 Padding="7,4"
@@ -721,7 +818,7 @@
                                 BorderBrush="{StaticResource VFAccentBlueBrush}"
                                 BorderThickness="1"
                                 CornerRadius="3">
-                                <TextBlock FontSize="11" Text="0 Messages" />
+                                <TextBlock x:Name="MessageCountText" FontSize="11" Text="0 Messages" />
                             </Border>
                         </StackPanel>
                         <AutoSuggestBox
@@ -765,20 +862,112 @@
                                 Style="{StaticResource VFStatusTextBlockStyle}"
                                 Text="Line" />
                         </Grid>
-                        <TextBlock
-                            x:Name="ProblemListSummaryText"
-                            Grid.Row="1"
-                            Margin="12"
-                            FontFamily="Cascadia Mono"
-                            FontSize="12"
-                            Text="No issues. Build pipeline ready.&#x0a;Output: msbuild -&gt; compile database -&gt; clangd -&gt; DAP." />
                         <TabView
-                            Grid.Row="2"
+                            Grid.Row="1"
                             IsAddTabButtonVisible="False"
                             TabWidthMode="SizeToContent">
-                            <TabViewItem Header="Developer PowerShell" />
-                            <TabViewItem Header="Output" />
-                            <TabViewItem Header="Terminal" />
+                            <TabViewItem Header="Error List">
+                                <ListView
+                                    x:Name="DiagnosticsList"
+                                    Margin="12,4,12,8"
+                                    SelectionChanged="DiagnosticsList_SelectionChanged" />
+                            </TabViewItem>
+                            <TabViewItem Header="Search Results">
+                                <ListView
+                                    x:Name="SearchResultsList"
+                                    Margin="12,4,12,8"
+                                    SelectionChanged="SearchResultsList_SelectionChanged" />
+                            </TabViewItem>
+                        </TabView>
+                        <TabView
+                            x:Name="BottomToolTabs"
+                            Grid.Row="2"
+                            IsAddTabButtonVisible="False"
+                            SelectionChanged="BottomToolTabs_SelectionChanged"
+                            TabWidthMode="SizeToContent">
+                            <TabViewItem Header="Developer PowerShell">
+                                <Grid Background="{StaticResource VFEditorBrush}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <TextBox
+                                        x:Name="TerminalOutputTextBox"
+                                        AcceptsReturn="True"
+                                        Background="{StaticResource VFEditorBrush}"
+                                        BorderThickness="0"
+                                        FontFamily="Cascadia Mono"
+                                        FontSize="12"
+                                        IsReadOnly="True"
+                                        Padding="10,6"
+                                        TextWrapping="NoWrap" />
+                                    <Grid Grid.Row="1" Margin="8,3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBox
+                                            x:Name="TerminalCommandBox"
+                                            Height="30"
+                                            PlaceholderText="PowerShell command" />
+                                        <Button
+                                            Grid.Column="1"
+                                            Margin="6,0,0,0"
+                                            Click="ExecuteTerminal_Click"
+                                            Content="&#xE768;"
+                                            ToolTipService.ToolTip="Execute command" />
+                                    </Grid>
+                                </Grid>
+                            </TabViewItem>
+                            <TabViewItem Header="Output">
+                                <Grid Background="{StaticResource VFEditorBrush}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Border
+                                        Padding="8,3"
+                                        BorderBrush="{StaticResource VFSoftBorderBrush}"
+                                        BorderThickness="0,0,0,1">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                Margin="2,0,12,0"
+                                                VerticalAlignment="Center"
+                                                Style="{StaticResource VFStatusTextBlockStyle}"
+                                                Text="Build and IDE Output" />
+                                            <Button
+                                                Click="ClearOutput_Click"
+                                                Content="&#xE74D;"
+                                                ToolTipService.ToolTip="Clear output" />
+                                        </StackPanel>
+                                    </Border>
+                                    <TextBox
+                                        x:Name="OutputTextBox"
+                                        Grid.Row="1"
+                                        AcceptsReturn="True"
+                                        Background="{StaticResource VFEditorBrush}"
+                                        BorderThickness="0"
+                                        FontFamily="Cascadia Mono"
+                                        FontSize="12"
+                                        IsReadOnly="True"
+                                        Padding="10,6"
+                                        TextWrapping="NoWrap" />
+                                </Grid>
+                            </TabViewItem>
+                            <TabViewItem Header="Terminal">
+                                <TextBlock
+                                    Margin="12"
+                                    Style="{StaticResource VFStatusTextBlockStyle}"
+                                    Text="Use Developer PowerShell for workspace commands." />
+                            </TabViewItem>
+                            <TabViewItem x:Name="CallStackTab" Header="Call Stack" Visibility="Collapsed">
+                                <ListView
+                                    x:Name="CallStackList"
+                                    SelectionChanged="CallStackList_SelectionChanged" />
+                            </TabViewItem>
+                            <TabViewItem x:Name="LocalsTab" Header="Locals" Visibility="Collapsed">
+                                <ListView x:Name="LocalsList" />
+                            </TabViewItem>
                         </TabView>
                     </Grid>
                 </Grid>
@@ -786,8 +975,12 @@
 
             <Border Grid.Column="4" Background="{StaticResource VFBorderBrush}" />
 
-            <Grid Grid.Column="5" Background="{StaticResource VFPanelBrush}">
-                <TabView IsAddTabButtonVisible="False" TabWidthMode="Equal">
+            <Grid x:Name="RightToolWindowGrid" Grid.Column="5" Background="{StaticResource VFPanelBrush}">
+                <TabView
+                    x:Name="RightToolTabs"
+                    IsAddTabButtonVisible="False"
+                    SelectionChanged="RightToolTabs_SelectionChanged"
+                    TabWidthMode="Equal">
                     <TabViewItem Header="Solution Explorer">
                         <Grid Background="{StaticResource VFPanelBrush}">
                             <Grid.RowDefinitions>
@@ -843,34 +1036,14 @@
                                     <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Show all files">
                                         <FontIcon FontSize="13" Glyph="&#xE8A5;" />
                                     </Button>
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Refresh">
+                                    <Button Click="RefreshSolutionExplorer_Click" Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Refresh">
                                         <FontIcon FontSize="13" Glyph="&#xE72C;" />
                                     </Button>
                                 </StackPanel>
                             </Border>
-                            <TreeView Grid.Row="2" Margin="6">
-                                <TreeView.RootNodes>
-                                    <TreeViewNode Content="Solution 'VisualForge' (1 of 1 project)" IsExpanded="True">
-                                        <TreeViewNode.Children>
-                                            <TreeViewNode Content="VisualForge" IsExpanded="True">
-                                                <TreeViewNode.Children>
-                                                    <TreeViewNode Content="Core" />
-                                                    <TreeViewNode Content="IDE" IsExpanded="True">
-                                                        <TreeViewNode.Children>
-                                                            <TreeViewNode Content="ShellLayout.h" />
-                                                            <TreeViewNode Content="ShellLayout.cpp" />
-                                                        </TreeViewNode.Children>
-                                                    </TreeViewNode>
-                                                    <TreeViewNode Content="Integration" />
-                                                    <TreeViewNode Content="Tool" />
-                                                    <TreeViewNode Content="UI" />
-                                                    <TreeViewNode Content="ViewModels" />
-                                                </TreeViewNode.Children>
-                                            </TreeViewNode>
-                                        </TreeViewNode.Children>
-                                    </TreeViewNode>
-                                </TreeView.RootNodes>
-                            </TreeView>
+                            <controls:SolutionExplorerControl
+                                x:Name="SolutionExplorer"
+                                Grid.Row="2" />
                         </Grid>
                     </TabViewItem>
                     <TabViewItem Header="Git Changes">
@@ -919,17 +1092,42 @@
                                     Padding="10,8"
                                     Orientation="Horizontal"
                                     Spacing="6">
-                                    <Button Padding="8,4" Content="Commit" />
+                                    <Button Click="RefreshGitChanges_Click" Padding="8,4" Content="Refresh" />
                                     <Button Padding="8,4" Content="Pull" />
                                     <Button Padding="8,4" Content="Push" />
+                                    <TextBlock
+                                        x:Name="GitChangeSummaryText"
+                                        VerticalAlignment="Center"
+                                        Style="{StaticResource VFStatusTextBlockStyle}"
+                                        Text="No repository loaded" />
                                 </StackPanel>
                             </Border>
-                            <ListView Grid.Row="2" Margin="6">
-                                <ListViewItem Content="M  App.xaml.cpp" />
-                                <ListViewItem Content="M  MainView.xaml" />
-                                <ListViewItem Content="A  IDE/Shell/ShellLayout.cpp" />
-                                <ListViewItem Content="A  IDE/Shell/ShellLayout.h" />
-                            </ListView>
+                            <Grid Grid.Row="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="160" />
+                                </Grid.RowDefinitions>
+                                <ListView
+                                    x:Name="GitChangesList"
+                                    Margin="6"
+                                    SelectionChanged="GitChangesList_SelectionChanged" />
+                                <Border
+                                    Grid.Row="1"
+                                    Margin="6,0,6,6"
+                                    BorderBrush="{StaticResource VFBorderBrush}"
+                                    BorderThickness="1">
+                                    <TextBox
+                                        x:Name="GitDiffOutputTextBox"
+                                        AcceptsReturn="True"
+                                        Background="{StaticResource VFEditorBrush}"
+                                        BorderThickness="0"
+                                        FontFamily="Cascadia Mono"
+                                        FontSize="11"
+                                        IsReadOnly="True"
+                                        Padding="8"
+                                        TextWrapping="NoWrap" />
+                                </Border>
+                            </Grid>
                         </Grid>
                     </TabViewItem>
                     <TabViewItem Header="Properties">
@@ -1000,10 +1198,43 @@
                             </Grid>
                         </Grid>
                     </TabViewItem>
+                    <TabViewItem x:Name="DebugToolsTab" Header="Debug Tools" Visibility="Collapsed">
+                        <Grid Background="{StaticResource VFPanelBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Margin="10,10,10,4"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Text="Diagnostic Tools" />
+                            <Grid Grid.Row="1" Margin="10,0,10,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    x:Name="DebugSessionText"
+                                    Style="{StaticResource VFStatusTextBlockStyle}"
+                                    Text="No debug session" />
+                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
+                                    <Button Click="ContinueDebug_Click" Content="&#xE768;" ToolTipService.ToolTip="Continue" />
+                                    <Button Click="StepOverDebug_Click" Content="&#xE7A7;" ToolTipService.ToolTip="Step over" />
+                                    <Button Click="StepInDebug_Click" Content="&#xE7A7;" ToolTipService.ToolTip="Step in" />
+                                    <Button Click="StepOutDebug_Click" Content="&#xE7A7;" ToolTipService.ToolTip="Step out" />
+                                    <Button Click="StopDebug_Click" Content="&#xE71A;" ToolTipService.ToolTip="Stop debugging" />
+                                </StackPanel>
+                            </Grid>
+                            <ListView x:Name="DebugEventsList" Grid.Row="2" Margin="6" />
+                        </Grid>
+                    </TabViewItem>
                 </TabView>
             </Grid>
         </Grid>
 
+        <!--  Floating Preview Host  -->
         <Border
             x:Name="FloatingPreviewHost"
             Grid.Row="2"
@@ -1109,11 +1340,18 @@
                     x:Name="DebugStatusText"
                     Style="{StaticResource VFStatusTextBlockStyle}"
                     Text="DAP: offline" />
-                <TextBlock Style="{StaticResource VFStatusTextBlockStyle}" Text="git: main" />
+                <TextBlock
+                    x:Name="GitBranchStatusText"
+                    Style="{StaticResource VFStatusTextBlockStyle}"
+                    Text="git: unavailable" />
                 <TextBlock
                     x:Name="ProblemStatusText"
                     Style="{StaticResource VFStatusTextBlockStyle}"
                     Text="0 Errors" />
+                <TextBlock
+                    x:Name="EditorPositionText"
+                    Style="{StaticResource VFStatusTextBlockStyle}"
+                    Text="Ln 1, Col 1" />
             </StackPanel>
             <TextBlock
                 Grid.Column="2"

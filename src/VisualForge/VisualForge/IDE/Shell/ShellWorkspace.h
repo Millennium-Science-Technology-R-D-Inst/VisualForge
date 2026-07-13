@@ -9,6 +9,20 @@
 
 namespace VisualForge::IDE::Shell
 {
+    enum class WorkspaceMode
+    {
+        Editing,
+        Debugging
+    };
+
+    struct WorkspaceLayoutProfile
+    {
+        int BottomToolHeight{ 245 };
+        int RightToolTabIndex{ 0 };
+        int BottomToolTabIndex{ 1 };
+        bool ShowDiagnosticTools{ false };
+    };
+
     enum class CommandPlacement
     {
         Menu,
@@ -53,6 +67,10 @@ namespace VisualForge::IDE::Shell
         [[nodiscard]] std::vector<CommandBinding> const& Commands() const noexcept;
         [[nodiscard]] std::vector<DocumentGroup> const& DocumentGroups() const noexcept;
         [[nodiscard]] std::vector<ToolWindowRuntimeState> const& ToolWindowStates() const noexcept;
+        [[nodiscard]] WorkspaceMode Mode() const noexcept;
+        void SetMode(WorkspaceMode mode) noexcept;
+        [[nodiscard]] WorkspaceLayoutProfile const& Profile(WorkspaceMode mode) const noexcept;
+        [[nodiscard]] WorkspaceLayoutProfile& Profile(WorkspaceMode mode) noexcept;
         [[nodiscard]] std::optional<ToolWindowRuntimeState> FindToolWindowState(std::wstring const& contentId) const;
         [[nodiscard]] bool ExecuteDockCommand(std::wstring const& contentId, DockCommandKind command);
         [[nodiscard]] bool DockToolWindow(std::wstring const& contentId, DockSide side);
@@ -66,5 +84,10 @@ namespace VisualForge::IDE::Shell
         std::vector<CommandBinding> m_commands;
         std::vector<DocumentGroup> m_documentGroups;
         std::vector<ToolWindowRuntimeState> m_toolWindowStates;
+        WorkspaceMode m_mode{ WorkspaceMode::Editing };
+        WorkspaceLayoutProfile m_editingProfile{ 245, 0, 1, false };
+        WorkspaceLayoutProfile m_debuggingProfile{ 320, 3, 3, true };
     };
+
+    [[nodiscard]] std::wstring_view ToWorkspaceModeName(WorkspaceMode mode) noexcept;
 }

@@ -20,14 +20,38 @@ namespace VisualForge::EditorCore::LSP
     struct LspDiagnostic
     {
         std::wstring Uri;
+        std::size_t Line{};
+        std::size_t Column{};
+        std::size_t EndLine{};
+        std::size_t EndColumn{};
+        std::wstring Code;
         std::wstring Message;
         LspDiagnosticSeverity Severity{ LspDiagnosticSeverity::Unknown };
+    };
+
+    struct LspCompletionItem
+    {
+        std::wstring Label;
+        std::wstring Detail;
+        std::wstring InsertText;
+    };
+
+    struct LspLocation
+    {
+        std::wstring Uri;
+        std::size_t Line{};
+        std::size_t Column{};
+        std::size_t EndLine{};
+        std::size_t EndColumn{};
     };
 
     struct LspProtocolMessage
     {
         Protocol::JsonMessageSummary Summary;
         std::vector<LspDiagnostic> Diagnostics;
+        std::vector<LspCompletionItem> Completions;
+        std::wstring HoverText;
+        std::vector<LspLocation> Locations;
         std::string Payload;
     };
 
@@ -38,5 +62,8 @@ namespace VisualForge::EditorCore::LSP
 
     private:
         [[nodiscard]] static std::vector<LspDiagnostic> ParseDiagnostics(std::string_view payload);
+        [[nodiscard]] static std::vector<LspCompletionItem> ParseCompletions(std::string_view payload);
+        [[nodiscard]] static std::wstring ParseHover(std::string_view payload);
+        [[nodiscard]] static std::vector<LspLocation> ParseLocations(std::string_view payload);
     };
 }

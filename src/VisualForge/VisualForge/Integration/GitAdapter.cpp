@@ -27,7 +27,7 @@ namespace VisualForge::Integration
     {
         return m_registry.CreateCommand(
             Tool::ToolKind::Git,
-            { L"status", L"--porcelain=v2", L"--branch" },
+            { L"status", L"--short", L"--branch" },
             repositoryRoot,
             L"Read Git status");
     }

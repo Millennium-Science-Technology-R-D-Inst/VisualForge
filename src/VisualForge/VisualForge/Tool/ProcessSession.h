@@ -44,6 +44,7 @@ namespace VisualForge::Tool
 
     private:
         void CloseHandles() noexcept;
+        void JoinReaders() noexcept;
         void StartReaders(void* stdoutRead, void* stderrRead);
         void ReadLoop(void* handle, bool stderrStream);
 

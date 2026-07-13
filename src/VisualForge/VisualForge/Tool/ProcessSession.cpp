@@ -28,6 +28,12 @@ namespace VisualForge::Tool
     ProcessSession::~ProcessSession()
     {
         Stop();
+        JoinReaders();
+        CloseHandles();
+    }
+
+    void ProcessSession::JoinReaders() noexcept
+    {
         if (m_stdoutReader.joinable())
         {
             m_stdoutReader.join();
@@ -37,8 +43,6 @@ namespace VisualForge::Tool
         {
             m_stderrReader.join();
         }
-
-        CloseHandles();
     }
 
     bool ProcessSession::Start(ToolCommand const& command)
@@ -47,6 +51,18 @@ namespace VisualForge::Tool
         {
             return false;
         }
+
+        // A session can be reused after a previous process exits. Join the old
+        // readers before assigning new reader threads.
+        JoinReaders();
+        CloseHandles();
+        {
+            std::scoped_lock lock{ m_outputLock };
+            m_stdout.clear();
+            m_stderr.clear();
+        }
+        m_exitCode = 0;
+        m_state = ProcessSessionState::NotStarted;
 
         SECURITY_ATTRIBUTES securityAttributes{};
         securityAttributes.nLength = sizeof(securityAttributes);

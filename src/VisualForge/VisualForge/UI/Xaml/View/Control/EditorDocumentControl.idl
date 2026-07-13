@@ -1,0 +1,21 @@
+namespace VisualForge.UI.Xaml.View.Control
+{
+    [default_interface]
+    runtimeclass EditorDocumentControl : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        EditorDocumentControl();
+        String Text{ get; };
+        Int32 SelectionStart{ get; };
+        Int32 SelectionLength{ get; };
+        void SetText(String text);
+        void ReplaceSelection(String text);
+        void Select(Int32 start, Int32 length);
+        void FocusEditor();
+        void SetBreakpoint(Int32 line, Boolean enabled);
+        void SetDebugLine(Int32 line);
+        event Windows.Foundation.TypedEventHandler<Object, Object> TextChanged;
+        event Windows.Foundation.TypedEventHandler<Object, Object> SelectionChanged;
+        event Windows.Foundation.TypedEventHandler<Object, Object> CompletionRequested;
+        event Windows.Foundation.TypedEventHandler<Object, Int32> BreakpointRequested;
+    }
+}

@@ -14,6 +14,7 @@ namespace VisualForge::EditorCore::Document
         TextDocument& Open(std::filesystem::path path);
         TextDocument& NewUntitled(std::wstring initialText = {});
         bool Save(std::filesystem::path const& path);
+        bool SaveAs(std::filesystem::path const& oldPath, std::filesystem::path newPath);
         bool Close(std::filesystem::path const& path);
         [[nodiscard]] TextDocument* Find(std::filesystem::path const& path);
         [[nodiscard]] std::size_t Count() const noexcept;

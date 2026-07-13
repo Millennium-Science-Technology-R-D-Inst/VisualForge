@@ -6,6 +6,8 @@
   <ItemGroup>
     <Page Include="UI\Xaml\View\Window\MainWindow.xaml" />
     <Page Include="UI\Xaml\View\Page\MainView.xaml" />
+    <Page Include="UI\Xaml\View\Control\SolutionExplorerControl.xaml" />
+    <Page Include="UI\Xaml\View\Control\EditorDocumentControl.xaml" />
     <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -21,6 +23,14 @@
     <ClCompile Include="UI\Xaml\View\Page\MainView.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>
       <Filter>UI\Xaml\View\Page</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Control\SolutionExplorerControl.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Control\SolutionExplorerControl.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Control\EditorDocumentControl.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Control\EditorDocumentControl.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Control</Filter>
     </ClCompile>
     <ClCompile Include="Tool\ToolKind.cpp">
       <Filter>Tool</Filter>
@@ -153,6 +163,14 @@
     <ClInclude Include="UI\Xaml\View\Page\MainView.xaml.h">
       <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>
       <Filter>UI\Xaml\View\Page</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Control\SolutionExplorerControl.h">
+      <DependentUpon>UI\Xaml\View\Control\SolutionExplorerControl.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Control\EditorDocumentControl.h">
+      <DependentUpon>UI\Xaml\View\Control\EditorDocumentControl.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Control</Filter>
     </ClInclude>
     <ClInclude Include="Tool\ToolKind.h">
       <Filter>Tool</Filter>
@@ -317,6 +335,9 @@
     <Filter Include="UI\Xaml\View\Page">
       <UniqueIdentifier>{e5a531f9-b251-4747-a688-0418f17a6bf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\Xaml\View\Control">
+      <UniqueIdentifier>{11e2228a-ccdd-47e1-91bb-0f78d01f2b56}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Tool">
       <UniqueIdentifier>{ce9c78cf-a02e-4308-9e75-c5cd80bde429}</UniqueIdentifier>
     </Filter>
@@ -389,6 +410,14 @@
     <Midl Include="UI\Xaml\View\Page\MainView.idl">
       <DependentUpon>UI\Xaml\View\Page\MainView.xaml</DependentUpon>
       <Filter>UI\Xaml\View\Page</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Control\SolutionExplorerControl.idl">
+      <DependentUpon>UI\Xaml\View\Control\SolutionExplorerControl.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Control</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Control\EditorDocumentControl.idl">
+      <DependentUpon>UI\Xaml\View\Control\EditorDocumentControl.xaml</DependentUpon>
+      <Filter>UI\Xaml\View\Control</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>

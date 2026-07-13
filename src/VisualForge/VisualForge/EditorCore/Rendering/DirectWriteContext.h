@@ -1,6 +1,6 @@
 #pragma once
 
-#include <dwrite_3.h>
+#include <dwrite_core.h>
 
 #include <string>
 #include <string_view>
