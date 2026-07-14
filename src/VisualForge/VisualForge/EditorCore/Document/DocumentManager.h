@@ -11,6 +11,7 @@ namespace VisualForge::EditorCore::Document
     class DocumentManager final
     {
     public:
+        [[nodiscard]] static std::wstring ReadTextFile(std::filesystem::path const& path);
         TextDocument& Open(std::filesystem::path path);
         TextDocument& NewUntitled(std::wstring initialText = {});
         bool Save(std::filesystem::path const& path);

@@ -21,6 +21,8 @@ namespace VisualForge::IDE::Shell
         int RightToolTabIndex{ 0 };
         int BottomToolTabIndex{ 1 };
         bool ShowDiagnosticTools{ false };
+        int LeftToolWidth{ 250 };
+        int RightToolWidth{ 360 };
     };
 
     enum class CommandPlacement
@@ -85,8 +87,8 @@ namespace VisualForge::IDE::Shell
         std::vector<DocumentGroup> m_documentGroups;
         std::vector<ToolWindowRuntimeState> m_toolWindowStates;
         WorkspaceMode m_mode{ WorkspaceMode::Editing };
-        WorkspaceLayoutProfile m_editingProfile{ 245, 0, 1, false };
-        WorkspaceLayoutProfile m_debuggingProfile{ 320, 3, 3, true };
+        WorkspaceLayoutProfile m_editingProfile{ 245, 0, 1, false, 250, 360 };
+        WorkspaceLayoutProfile m_debuggingProfile{ 320, 3, 3, true, 250, 360 };
     };
 
     [[nodiscard]] std::wstring_view ToWorkspaceModeName(WorkspaceMode mode) noexcept;

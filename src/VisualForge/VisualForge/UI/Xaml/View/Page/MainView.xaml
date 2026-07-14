@@ -3,10 +3,10 @@
     x:Class="VisualForge.UI.Xaml.View.Page.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:essential="using:WinUI3Package"
     xmlns:controls="using:VisualForge.UI.Xaml.View.Control"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:editor="using:VisualForge.UI.Xaml.View.Control"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:VisualForge.UI.Xaml.View.Page"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xtwc="using:XamlToolkit.WinUI.Controls"
@@ -16,19 +16,90 @@
     mc:Ignorable="d">
 
     <Page.KeyboardAccelerators>
-        <KeyboardAccelerator Key="S" Modifiers="Control" Invoked="SaveKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="N" Modifiers="Control" Invoked="NewFileKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="S" Modifiers="Control,Shift" Invoked="SaveAsKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="Z" Modifiers="Control" Invoked="UndoKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="Y" Modifiers="Control" Invoked="RedoKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="F" Modifiers="Control" Invoked="FindKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="H" Modifiers="Control" Invoked="ReplaceKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="G" Modifiers="Control" Invoked="GoToLineKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="P" Modifiers="Control" Invoked="QuickOpenKeyboardAccelerator_Invoked" />
-        <KeyboardAccelerator Key="I" Modifiers="Control" Invoked="HoverKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator
+            Key="S"
+            Invoked="SaveKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="N"
+            Invoked="NewFileKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="N"
+            Invoked="NewProjectItemKeyboardAccelerator_Invoked"
+            Modifiers="Control,Shift" />
+        <KeyboardAccelerator
+            Key="S"
+            Invoked="SaveAsKeyboardAccelerator_Invoked"
+            Modifiers="Control,Shift" />
+        <KeyboardAccelerator
+            Key="Z"
+            Invoked="UndoKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="Y"
+            Invoked="RedoKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="Z"
+            Invoked="RedoKeyboardAccelerator_Invoked"
+            Modifiers="Control,Shift" />
+        <KeyboardAccelerator
+            Key="F"
+            Invoked="FindKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="H"
+            Invoked="ReplaceKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="G"
+            Invoked="GoToLineKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="P"
+            Invoked="QuickOpenKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="Q"
+            Invoked="CommandPaletteKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="Tab"
+            Invoked="NextDocumentKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="Tab"
+            Invoked="PreviousDocumentKeyboardAccelerator_Invoked"
+            Modifiers="Control,Shift" />
+        <KeyboardAccelerator
+            Key="F4"
+            Invoked="CloseDocumentKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="I"
+            Invoked="HoverKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
+        <KeyboardAccelerator
+            Key="I"
+            Invoked="FormatDocumentKeyboardAccelerator_Invoked"
+            Modifiers="Control,Shift" />
+        <KeyboardAccelerator
+            Key="Enter"
+            Invoked="CodeActionsKeyboardAccelerator_Invoked"
+            Modifiers="Control" />
         <KeyboardAccelerator Key="F12" Invoked="GoToDefinitionKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator
+            Key="F12"
+            Invoked="FindReferencesKeyboardAccelerator_Invoked"
+            Modifiers="Shift" />
+        <KeyboardAccelerator Key="F2" Invoked="RenameKeyboardAccelerator_Invoked" />
         <KeyboardAccelerator Key="F9" Invoked="ToggleBreakpointKeyboardAccelerator_Invoked" />
         <KeyboardAccelerator Key="F5" Invoked="StartDebuggingKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator
+            Key="B"
+            Invoked="BuildSolutionKeyboardAccelerator_Invoked"
+            Modifiers="Control,Shift" />
     </Page.KeyboardAccelerators>
 
     <Grid Background="{StaticResource VFEditorBrush}">
@@ -68,74 +139,96 @@
                         Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
                     <MenuBar Background="Transparent">
                         <MenuBarItem Title="File">
-                            <MenuFlyoutItem Text="New File" Click="NewFile_Click" />
-                            <MenuFlyoutItem Text="New Project" />
-                            <MenuFlyoutItem Text="Open Workspace" Click="OpenWorkspace_Click" />
-                            <MenuFlyoutItem Text="Open File" Click="OpenFile_Click" />
+                            <MenuFlyoutItem Click="NewFile_Click" Text="New File" />
+                            <MenuFlyoutItem Click="NewProjectItem_Click" Text="New Project Item" />
+                            <MenuFlyoutItem Click="NewProject_Click" Text="New Project" />
+                            <MenuFlyoutItem Click="OpenWorkspace_Click" Text="Open Workspace" />
+                            <MenuFlyoutSubItem x:Name="RecentWorkspacesMenu" Text="Recent Workspaces" />
+                            <MenuFlyoutItem Click="OpenFile_Click" Text="Open File" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Save" Click="SaveFile_Click" />
-                            <MenuFlyoutItem Text="Save As..." Click="SaveAs_Click" />
-                            <MenuFlyoutItem Text="Save All" Click="SaveAll_Click" />
-                            <MenuFlyoutItem Text="Exit" />
+                            <MenuFlyoutItem Click="SaveFile_Click" Text="Save" />
+                            <MenuFlyoutItem Click="SaveAs_Click" Text="Save As..." />
+                            <MenuFlyoutItem Click="RenameActiveFile_Click" Text="Rename Active File" />
+                            <MenuFlyoutItem Click="DeleteActiveFile_Click" Text="Delete Active File" />
+                            <MenuFlyoutItem Click="SaveAll_Click" Text="Save All" />
+                            <MenuFlyoutItem Click="ExitMenu_Click" Text="Exit" />
+                        </MenuBarItem>
+                        <MenuBarItem Title="Build">
+                            <MenuFlyoutItem Click="BuildProject_Click" Text="Build Solution" />
+                            <MenuFlyoutItem Click="RebuildProject_Click" Text="Rebuild Solution" />
+                            <MenuFlyoutItem Click="CleanProject_Click" Text="Clean Solution" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Click="BuildProjectOnly_Click" Text="Build Startup Project" />
                         </MenuBarItem>
                         <MenuBarItem Title="Edit">
-                            <MenuFlyoutItem Text="Undo" Click="Undo_Click" />
-                            <MenuFlyoutItem Text="Redo" Click="Redo_Click" />
+                            <MenuFlyoutItem Click="Undo_Click" Text="Undo" />
+                            <MenuFlyoutItem Click="Redo_Click" Text="Redo" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Go To Line" Click="GoToLine_Click" />
-                            <MenuFlyoutItem Text="Find in Files" Click="FindInFiles_Click" />
+                            <MenuFlyoutItem Click="Cut_Click" Text="Cut" />
+                            <MenuFlyoutItem Click="Copy_Click" Text="Copy" />
+                            <MenuFlyoutItem Click="Paste_Click" Text="Paste" />
+                            <MenuFlyoutItem Click="SelectAll_Click" Text="Select All" />
+                            <MenuFlyoutItem Click="RenameActiveSymbol_Click" Text="Rename Symbol" />
+                            <MenuFlyoutItem Click="FormatDocument_Click" Text="Format Document" />
+                            <MenuFlyoutItem Click="CodeActions_Click" Text="Quick Actions" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Click="GoToLine_Click" Text="Go To Line" />
+                            <MenuFlyoutItem Click="FindInFiles_Click" Text="Find in Files" />
                         </MenuBarItem>
                         <MenuBarItem Title="View">
-                            <MenuFlyoutItem Text="Editing Layout" Click="EditingLayout_Click" />
-                            <MenuFlyoutItem Text="Debugging Layout" Click="DebuggingLayout_Click" />
+                            <MenuFlyoutItem Click="CommandPalette_Click" Text="Command Palette" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Solution Explorer" />
-                            <MenuFlyoutItem Text="Git Changes" />
-                            <MenuFlyoutItem Text="Git Repository" />
-                            <MenuFlyoutItem Text="Team Explorer" />
-                            <MenuFlyoutItem Text="Server Explorer" />
-                            <MenuFlyoutItem Text="SQL Server Object Explorer" />
+                            <MenuFlyoutItem Click="EditingLayout_Click" Text="Editing Layout" />
+                            <MenuFlyoutItem Click="DebuggingLayout_Click" Text="Debugging Layout" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Error List" />
-                            <MenuFlyoutItem Text="Output" />
-                            <MenuFlyoutItem Text="Terminal" />
-                            <MenuFlyoutItem Text="Toolbox" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Solution Explorer" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Git Changes" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Git Repository" />
+                            <MenuFlyoutItem Click="UnavailableMenu_Click" Text="Team Explorer" />
+                            <MenuFlyoutItem Click="UnavailableMenu_Click" Text="Server Explorer" />
+                            <MenuFlyoutItem Click="UnavailableMenu_Click" Text="SQL Server Object Explorer" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Full Screen" />
-                            <MenuFlyoutItem Text="Properties Window" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Error List" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Output" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Terminal" />
+                            <MenuFlyoutItem Click="UnavailableMenu_Click" Text="Toolbox" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Click="FullScreen_Click" Text="Full Screen" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Properties Window" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Document Outline" />
                         </MenuBarItem>
                         <MenuBarItem Title="Git">
-                            <MenuFlyoutItem Text="Commit or Stash" />
-                            <MenuFlyoutItem Text="Pull" />
-                            <MenuFlyoutItem Text="Push" />
-                            <MenuFlyoutItem Text="Manage Branches" />
+                            <MenuFlyoutItem Click="GitCommit_Click" Text="Commit or Stash" />
+                            <MenuFlyoutItem Click="GitPull_Click" Text="Pull" />
+                            <MenuFlyoutItem Click="GitPush_Click" Text="Push" />
+                            <MenuFlyoutItem Click="ManageBranches_Click" Text="Manage Branches" />
                         </MenuBarItem>
                         <MenuBarItem Title="Debug">
-                            <MenuFlyoutItem Text="Start Debugging" Click="RunProject_Click" />
-                            <MenuFlyoutItem Text="Start Without Debugging" Click="RunProject_Click" />
+                            <MenuFlyoutItem Click="RunProject_Click" Text="Start Debugging" />
+                            <MenuFlyoutItem Click="RunWithoutDebugging_Click" Text="Start Without Debugging" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Step Over" />
-                            <MenuFlyoutItem Text="Step Into" />
-                            <MenuFlyoutItem Text="Step Out" />
-                            <MenuFlyoutItem Text="Debug Windows" />
+                            <MenuFlyoutItem Click="StepOverDebug_Click" Text="Step Over" />
+                            <MenuFlyoutItem Click="StepInDebug_Click" Text="Step Into" />
+                            <MenuFlyoutItem Click="StepOutDebug_Click" Text="Step Out" />
+                            <MenuFlyoutItem Click="ViewToolWindow_Click" Text="Debug Windows" />
                         </MenuBarItem>
                         <MenuBarItem Title="Tools">
-                            <MenuFlyoutItem Text="NuGet Package Manager" />
-                            <MenuFlyoutItem Text="vcpkg Package Manager" />
+                            <MenuFlyoutItem Click="NuGetPackageManager_Click" Text="NuGet Package Manager" />
+                            <MenuFlyoutItem Click="VcpkgPackageManager_Click" Text="vcpkg Package Manager" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Text="Options" />
+                            <MenuFlyoutItem Click="OptionsMenu_Click" Text="Options" />
                         </MenuBarItem>
                         <MenuBarItem Title="Extensions">
-                            <MenuFlyoutItem Text="Manage Extensions" />
-                            <MenuFlyoutItem Text="Plugin Developer Console" />
+                            <MenuFlyoutItem Click="UnavailableMenu_Click" Text="Manage Extensions" />
+                            <MenuFlyoutItem Click="UnavailableMenu_Click" Text="Plugin Developer Console" />
                         </MenuBarItem>
                         <MenuBarItem Title="Window">
-                            <MenuFlyoutItem Text="Reset Window Layout" />
-                            <MenuFlyoutItem Text="Save Window Layout" />
+                            <MenuFlyoutItem Click="ResetWindowLayout_Click" Text="Reset Window Layout" />
+                            <MenuFlyoutItem Click="SaveWindowLayout_Click" Text="Save Window Layout" />
                         </MenuBarItem>
                         <MenuBarItem Title="Help">
-                            <MenuFlyoutItem Text="View Documentation" />
-                            <MenuFlyoutItem Text="About VisualForge" />
+                            <MenuFlyoutItem Click="UnavailableMenu_Click" Text="View Documentation" />
+                            <MenuFlyoutItem Click="AboutMenu_Click" Text="About VisualForge" />
                         </MenuBarItem>
                     </MenuBar>
                 </StackPanel>
@@ -221,8 +314,12 @@
                     <AppBarButton
                         x:Name="EditorInformationNavigationList"
                         AllowFocusOnInteraction="True"
+                        Click="NavigateBack_Click"
                         Icon="{essential:FontIcon Glyph=&#xE760;}" />
-                    <AppBarButton AllowFocusOnInteraction="True" Icon="{essential:FontIcon Glyph=&#xE761;}" />
+                    <AppBarButton
+                        AllowFocusOnInteraction="True"
+                        Click="NavigateForward_Click"
+                        Icon="{essential:FontIcon Glyph=&#xE761;}" />
                     <AppBarButton
                         AllowFocusOnInteraction="True"
                         Click="NewFile_Click"
@@ -230,9 +327,13 @@
                         ToolTipService.ToolTip="New File (Ctrl+N)" />
                     <AppBarButton
                         AllowFocusOnInteraction="True"
+                        Click="NewProjectItem_Click"
                         Icon="{essential:FontIcon Glyph=&#xF0B2;}"
                         ToolTipService.ToolTip="New Project Item (Ctrl+Shift+N)" />
-                    <AppBarButton Label="Open" Click="OpenWorkspace_Click" ToolTipService.ToolTip="Open workspace folder">
+                    <AppBarButton
+                        Click="OpenWorkspace_Click"
+                        Label="Open"
+                        ToolTipService.ToolTip="Open workspace folder">
                         <AppBarButton.Icon>
                             <FontIcon Glyph="&#xE8E5;" />
                         </AppBarButton.Icon>
@@ -285,34 +386,60 @@
                 DefaultLabelPosition="Collapsed"
                 IsOpen="False"
                 OverflowButtonVisibility="Collapsed">
-                <AppBarButton Label="Save All" Click="SaveAll_Click" ToolTipService.ToolTip="Save all open files">
+                <AppBarButton
+                    Click="SaveAll_Click"
+                    Label="Save All"
+                    ToolTipService.ToolTip="Save all open files">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE74E;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
                 <AppBarSeparator />
-                <AppBarButton Label="Build" Click="BuildProject_Click" ToolTipService.ToolTip="Build solution">
+                <AppBarButton
+                    Click="BuildProject_Click"
+                    Label="Build"
+                    ToolTipService.ToolTip="Build solution">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton Label="Run" Click="RunProject_Click" ToolTipService.ToolTip="Start debugging">
+                <AppBarButton
+                    Click="RunProject_Click"
+                    Label="Run"
+                    ToolTipService.ToolTip="Start debugging">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE768;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton Label="Stop" ToolTipService.ToolTip="Stop debugging">
+                <AppBarButton
+                    Click="StopDebug_Click"
+                    Label="Stop"
+                    ToolTipService.ToolTip="Stop debugging">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE71A;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
+                <AppBarButton
+                    Click="CancelBuild_Click"
+                    Label="Cancel Build"
+                    ToolTipService.ToolTip="Cancel the active build">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE711;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
                 <AppBarSeparator />
-                <AppBarButton Label="Git" ToolTipService.ToolTip="Git changes">
+                <AppBarButton
+                    Click="RefreshGitChanges_Click"
+                    Label="Git"
+                    ToolTipService.ToolTip="Git changes">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE8EF;" />
                     </AppBarButton.Icon>
                 </AppBarButton>
-                <AppBarButton Label="Packages" ToolTipService.ToolTip="Package managers">
+                <AppBarButton
+                    Click="NuGetPackageManager_Click"
+                    Label="Packages"
+                    ToolTipService.ToolTip="Package managers">
                     <AppBarButton.Icon>
                         <FontIcon Glyph="&#xE7B8;" />
                     </AppBarButton.Icon>
@@ -330,19 +457,56 @@
                     Width="210"
                     PlaceholderText="Find"
                     TextChanged="FindTextBox_TextChanged" />
-                <TextBox x:Name="ReplaceTextBox" Width="150" PlaceholderText="Replace" />
-                <ToggleButton x:Name="MatchCaseToggle" Content="Aa" Checked="FindOptions_Changed" Unchecked="FindOptions_Changed" ToolTipService.ToolTip="Match case" />
-                <ToggleButton x:Name="WholeWordToggle" Content="ab" Checked="FindOptions_Changed" Unchecked="FindOptions_Changed" ToolTipService.ToolTip="Match whole word" />
-                <Button Click="FindPrevious_Click" Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Previous match">
+                <TextBox
+                    x:Name="ReplaceTextBox"
+                    Width="150"
+                    PlaceholderText="Replace" />
+                <ToggleButton
+                    x:Name="MatchCaseToggle"
+                    Checked="FindOptions_Changed"
+                    Content="Aa"
+                    ToolTipService.ToolTip="Match case"
+                    Unchecked="FindOptions_Changed" />
+                <ToggleButton
+                    x:Name="WholeWordToggle"
+                    Checked="FindOptions_Changed"
+                    Content="ab"
+                    ToolTipService.ToolTip="Match whole word"
+                    Unchecked="FindOptions_Changed" />
+                <Button
+                    Click="FindPrevious_Click"
+                    Style="{StaticResource VFIconButtonStyle}"
+                    ToolTipService.ToolTip="Previous match">
                     <FontIcon Glyph="&#xE70E;" />
                 </Button>
-                <Button Click="FindNext_Click" Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Next match">
+                <Button
+                    Click="FindNext_Click"
+                    Style="{StaticResource VFIconButtonStyle}"
+                    ToolTipService.ToolTip="Next match">
                     <FontIcon Glyph="&#xE70D;" />
                 </Button>
-                <Button Click="Replace_Click" Padding="8,4" Content="Replace" />
-                <Button Click="ReplaceAll_Click" Padding="8,4" Content="All" />
-                <Button Click="FindInFiles_Click" Padding="8,4" Content="Files" ToolTipService.ToolTip="Find in workspace" />
-                <TextBlock x:Name="FindSummaryText" VerticalAlignment="Center" Style="{StaticResource VFStatusTextBlockStyle}" />
+                <Button
+                    Padding="8,4"
+                    Click="Replace_Click"
+                    Content="Replace" />
+                <Button
+                    Padding="8,4"
+                    Click="ReplaceAll_Click"
+                    Content="All" />
+                <Button
+                    Padding="8,4"
+                    Click="FindInFiles_Click"
+                    Content="Files"
+                    ToolTipService.ToolTip="Find in workspace" />
+                <Button
+                    Padding="8,4"
+                    Click="ReplaceInFiles_Click"
+                    Content="Replace Files"
+                    ToolTipService.ToolTip="Replace in workspace files" />
+                <TextBlock
+                    x:Name="FindSummaryText"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource VFStatusTextBlockStyle}" />
             </StackPanel>
 
             <StackPanel
@@ -354,22 +518,26 @@
                     x:Name="WorkspaceModeComboBox"
                     Width="124"
                     Height="28"
-                    SelectionChanged="WorkspaceModeComboBox_SelectionChanged"
-                    SelectedIndex="0">
+                    SelectedIndex="0"
+                    SelectionChanged="WorkspaceModeComboBox_SelectionChanged">
                     <ComboBoxItem Content="Editing" />
                     <ComboBoxItem Content="Debugging" />
                 </ComboBox>
                 <ComboBox
+                    x:Name="ConfigurationComboBox"
                     Width="132"
                     Height="28"
-                    SelectedIndex="0">
+                    SelectedIndex="0"
+                    SelectionChanged="BuildConfiguration_SelectionChanged">
                     <ComboBoxItem Content="Debug" />
                     <ComboBoxItem Content="Release" />
                 </ComboBox>
                 <ComboBox
+                    x:Name="PlatformComboBox"
                     Width="110"
                     Height="28"
-                    SelectedIndex="0">
+                    SelectedIndex="0"
+                    SelectionChanged="BuildPlatform_SelectionChanged">
                     <ComboBoxItem Content="x64" />
                     <ComboBoxItem Content="ARM64" />
                     <ComboBoxItem Content="Win32" />
@@ -389,7 +557,10 @@
                         <TextBlock FontSize="12" Text="Local Windows Debugger" />
                     </StackPanel>
                 </Border>
-                <Button Padding="8,4" ToolTipService.ToolTip="Settings">
+                <Button
+                    Padding="8,4"
+                    Click="OptionsMenu_Click"
+                    ToolTipService.ToolTip="Settings">
                     <FontIcon FontSize="14" Glyph="&#xE713;" />
                 </Button>
             </StackPanel>
@@ -398,11 +569,17 @@
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="42" />
-                <ColumnDefinition Width="250" MinWidth="210" />
-                <ColumnDefinition Width="1" />
+                <ColumnDefinition
+                    x:Name="LeftToolColumn"
+                    Width="250"
+                    MinWidth="210" />
+                <ColumnDefinition Width="4" />
                 <ColumnDefinition Width="*" MinWidth="620" />
-                <ColumnDefinition Width="1" />
-                <ColumnDefinition Width="360" MinWidth="300" />
+                <ColumnDefinition Width="4" />
+                <ColumnDefinition
+                    x:Name="RightToolColumn"
+                    Width="360"
+                    MinWidth="300" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0" Background="{StaticResource VFDockBrush}">
@@ -425,6 +602,7 @@
             <Grid Grid.Column="1" Background="{StaticResource VFPanelBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -435,8 +613,8 @@
                     PointerPressed="DockTitleBar_PointerPressed"
                     PointerReleased="DockTitleBar_PointerReleased"
                     Style="{StaticResource VFDockTitleBarStyle}"
-                    Tag="options"
-                    ToolTipService.ToolTip="Options">
+                    Tag="tabs"
+                    ToolTipService.ToolTip="Open documents">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -445,105 +623,81 @@
                     <TextBlock
                         Margin="0,0,7,0"
                         Style="{StaticResource VFDockGlyphTextBlockStyle}"
-                        Text="&#xE700;" />
+                        Text="&#xE8A5;" />
                     <TextBlock
                         Grid.Column="1"
                         Style="{StaticResource VFDockTitleTextBlockStyle}"
-                        Text="Options" />
+                        Text="Tabs" />
                     <StackPanel
                         Grid.Column="2"
                         Orientation="Horizontal"
                         Spacing="2">
-                        <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Search settings">
-                            <FontIcon FontSize="13" Glyph="&#xE721;" />
+                        <Button
+                            Click="NewFile_Click"
+                            Style="{StaticResource VFIconButtonStyle}"
+                            ToolTipService.ToolTip="New file">
+                            <FontIcon FontSize="13" Glyph="&#xE8A5;" />
                         </Button>
-                        <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Pin">
-                            <FontIcon FontSize="13" Glyph="&#xE718;" />
+                        <Button
+                            Click="DockCommand_Click"
+                            Style="{StaticResource VFIconButtonStyle}"
+                            Tag="autohide-left"
+                            ToolTipService.ToolTip="Auto hide">
+                            <FontIcon FontSize="13" Glyph="&#xE77A;" />
                         </Button>
-                        <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Float window">
-                            <FontIcon FontSize="13" Glyph="&#xE740;" />
+                        <Button
+                            Click="DockCommand_Click"
+                            Style="{StaticResource VFIconButtonStyle}"
+                            Tag="close-left"
+                            ToolTipService.ToolTip="Close">
+                            <FontIcon FontSize="13" Glyph="&#xE711;" />
                         </Button>
                     </StackPanel>
                 </Grid>
 
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <AutoSuggestBox Margin="8" PlaceholderText="Search options" />
-                    <TreeView
-                        Grid.Row="1"
-                        Margin="4,0,4,6"
-                        SelectionMode="Single">
-                        <TreeView.RootNodes>
-                            <TreeViewNode Content="Environment" IsExpanded="True">
-                                <TreeViewNode.Children>
-                                    <TreeViewNode Content="General" />
-                                    <TreeViewNode Content="Fonts and Colors" />
-                                    <TreeViewNode Content="Keyboard" />
-                                    <TreeViewNode Content="Startup" />
-                                </TreeViewNode.Children>
-                            </TreeViewNode>
-                            <TreeViewNode Content="Text Editor" IsExpanded="True">
-                                <TreeViewNode.Children>
-                                    <TreeViewNode Content="General" IsExpanded="True" />
-                                    <TreeViewNode Content="C/C++" />
-                                    <TreeViewNode Content="XAML" />
-                                    <TreeViewNode Content="Code Cleanup" />
-                                </TreeViewNode.Children>
-                            </TreeViewNode>
-                            <TreeViewNode Content="Projects and Solutions" IsExpanded="True">
-                                <TreeViewNode.Children>
-                                    <TreeViewNode Content="Build and Run" />
-                                    <TreeViewNode Content="VC++ Directories" />
-                                    <TreeViewNode Content="CMake" />
-                                </TreeViewNode.Children>
-                            </TreeViewNode>
-                            <TreeViewNode Content="Source Control" IsExpanded="True">
-                                <TreeViewNode.Children>
-                                    <TreeViewNode Content="Git Global Settings" />
-                                    <TreeViewNode Content="Git Repository Settings" />
-                                </TreeViewNode.Children>
-                            </TreeViewNode>
-                            <TreeViewNode Content="Debugging" IsExpanded="True">
-                                <TreeViewNode.Children>
-                                    <TreeViewNode Content="General" />
-                                    <TreeViewNode Content="Symbols" />
-                                    <TreeViewNode Content="NatVis" />
-                                </TreeViewNode.Children>
-                            </TreeViewNode>
-                            <TreeViewNode Content="Package Managers" IsExpanded="True">
-                                <TreeViewNode.Children>
-                                    <TreeViewNode Content="NuGet" />
-                                    <TreeViewNode Content="vcpkg" />
-                                </TreeViewNode.Children>
-                            </TreeViewNode>
-                        </TreeView.RootNodes>
-                    </TreeView>
-                </Grid>
-
-                <Border
+                <AutoSuggestBox
+                    x:Name="OpenDocumentsSearchBox"
+                    Grid.Row="1"
+                    Margin="8,6,8,4"
+                    PlaceholderText="Search open files"
+                    TextChanged="OpenDocumentsSearchBox_TextChanged" />
+                <ListView
+                    x:Name="OpenDocumentsList"
                     Grid.Row="2"
+                    Margin="4,0,4,4"
+                    SelectionChanged="OpenDocumentsList_SelectionChanged"
+                    SelectionMode="Single" />
+                <Border
+                    Grid.Row="3"
                     BorderBrush="{StaticResource VFBorderBrush}"
                     BorderThickness="0,1,0,0">
-                    <StackPanel
-                        Padding="8,5"
-                        Orientation="Horizontal"
-                        Spacing="8">
-                        <TextBlock FontSize="11" Text="Do you like this experience?" />
-                        <FontIcon FontSize="12" Glyph="&#xE8E1;" />
-                        <FontIcon FontSize="12" Glyph="&#xE8E0;" />
-                    </StackPanel>
+                    <TextBlock
+                        x:Name="OpenDocumentsSummaryText"
+                        Margin="8,5"
+                        Style="{StaticResource VFStatusTextBlockStyle}"
+                        Text="No open documents" />
                 </Border>
             </Grid>
 
-            <Border Grid.Column="2" Background="{StaticResource VFBorderBrush}" />
+            <xtwc:GridSplitter
+                Grid.Column="2"
+                Width="4"
+                HorizontalAlignment="Stretch"
+                Background="{StaticResource VFBorderBrush}"
+                PointerReleased="LayoutSplitter_PointerReleased"
+                ResizeBehavior="PreviousAndNext"
+                ResizeDirection="Columns" />
 
-            <Grid x:Name="EditorWorkspaceGrid" Grid.Column="3" Background="{StaticResource VFEditorBrush}">
+            <Grid
+                x:Name="EditorWorkspaceGrid"
+                Grid.Column="3"
+                Background="{StaticResource VFEditorBrush}">
                 <Grid.RowDefinitions>
-                    <RowDefinition x:Name="EditorAreaRow" Height="*" MinHeight="260" />
-                    <RowDefinition Height="1" />
+                    <RowDefinition
+                        x:Name="EditorAreaRow"
+                        Height="*"
+                        MinHeight="260" />
+                    <RowDefinition Height="4" />
                     <RowDefinition x:Name="BottomToolRow" Height="245" />
                 </Grid.RowDefinitions>
 
@@ -552,10 +706,11 @@
                     Grid.Row="0"
                     CanDragTabs="True"
                     IsAddTabButtonVisible="False"
+                    SelectedIndex="1"
                     SelectionChanged="EditorTabs_SelectionChanged"
                     TabCloseRequested="EditorTabs_TabCloseRequested"
                     TabWidthMode="SizeToContent">
-                    <TabViewItem Header="Options">
+                    <TabViewItem Header="Options" Visibility="Collapsed">
                         <Grid Background="{StaticResource VFEditorBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -680,7 +835,10 @@
                             </ScrollViewer>
                         </Grid>
                     </TabViewItem>
-                    <TabViewItem x:Name="ActiveDocumentTab" Header="MainView.xaml" IsClosable="True">
+                    <TabViewItem
+                        x:Name="ActiveDocumentTab"
+                        Header="MainView.xaml"
+                        IsClosable="True">
                         <Grid Background="{StaticResource VFEditorBrush}">
                             <editor:EditorDocumentControl
                                 x:Name="MainEditorControl"
@@ -704,6 +862,8 @@
                         BorderThickness="1">
                         <ListView
                             x:Name="CompletionListView"
+                            DoubleTapped="CompletionListView_DoubleTapped"
+                            KeyDown="CompletionListView_KeyDown"
                             SelectionChanged="CompletionListView_SelectionChanged" />
                     </Border>
                 </Popup>
@@ -732,7 +892,14 @@
                     </Border>
                 </Popup>
 
-                <Border Grid.Row="1" Background="{StaticResource VFBorderBrush}" />
+                <xtwc:GridSplitter
+                    Grid.Row="1"
+                    Height="4"
+                    HorizontalAlignment="Stretch"
+                    Background="{StaticResource VFBorderBrush}"
+                    PointerReleased="LayoutSplitter_PointerReleased"
+                    ResizeBehavior="PreviousAndNext"
+                    ResizeDirection="Rows" />
 
                 <Grid Grid.Row="2" Background="{StaticResource VFPanelBrush}">
                     <Grid.RowDefinitions>
@@ -764,16 +931,32 @@
                             Grid.Column="2"
                             Orientation="Horizontal"
                             Spacing="2">
-                            <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Auto hide">
+                            <Button
+                                Click="DockCommand_Click"
+                                Style="{StaticResource VFIconButtonStyle}"
+                                Tag="autohide-bottom"
+                                ToolTipService.ToolTip="Auto hide">
                                 <FontIcon FontSize="13" Glyph="&#xE77A;" />
                             </Button>
-                            <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Float window">
+                            <Button
+                                Click="DockCommand_Click"
+                                Style="{StaticResource VFIconButtonStyle}"
+                                Tag="float:errorList"
+                                ToolTipService.ToolTip="Float window">
                                 <FontIcon FontSize="13" Glyph="&#xE740;" />
                             </Button>
-                            <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Maximize">
+                            <Button
+                                Click="DockCommand_Click"
+                                Style="{StaticResource VFIconButtonStyle}"
+                                Tag="maximize-bottom"
+                                ToolTipService.ToolTip="Maximize">
                                 <FontIcon FontSize="13" Glyph="&#xE922;" />
                             </Button>
-                            <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Close">
+                            <Button
+                                Click="DockCommand_Click"
+                                Style="{StaticResource VFIconButtonStyle}"
+                                Tag="close-bottom"
+                                ToolTipService.ToolTip="Close">
                                 <FontIcon FontSize="13" Glyph="&#xE711;" />
                             </Button>
                         </StackPanel>
@@ -796,36 +979,68 @@
                                 <ComboBoxItem Content="Current Project" />
                                 <ComboBoxItem Content="Entire Solution" />
                             </ComboBox>
-                            <Border
-                                Padding="7,4"
-                                Background="#2C1722"
-                                BorderBrush="{StaticResource VFDangerBrush}"
-                                BorderThickness="1"
-                                CornerRadius="3">
-                                <TextBlock x:Name="ErrorCountText" FontSize="11" Text="0 Errors" />
-                            </Border>
-                            <Border
-                                Padding="7,4"
-                                Background="#2B2414"
-                                BorderBrush="{StaticResource VFWarningBrush}"
-                                BorderThickness="1"
-                                CornerRadius="3">
-                                <TextBlock x:Name="WarningCountText" FontSize="11" Text="0 Warnings" />
-                            </Border>
-                            <Border
-                                Padding="7,4"
-                                Background="#142231"
-                                BorderBrush="{StaticResource VFAccentBlueBrush}"
-                                BorderThickness="1"
-                                CornerRadius="3">
-                                <TextBlock x:Name="MessageCountText" FontSize="11" Text="0 Messages" />
-                            </Border>
+                            <Button
+                                x:Name="ErrorFilterButton"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="ErrorFilterButton_Click">
+                                <Border
+                                    Padding="7,4"
+                                    Background="#2C1722"
+                                    BorderBrush="{StaticResource VFDangerBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="3">
+                                    <TextBlock
+                                        x:Name="ErrorCountText"
+                                        FontSize="11"
+                                        Text="0 Errors" />
+                                </Border>
+                            </Button>
+                            <Button
+                                x:Name="WarningFilterButton"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="WarningFilterButton_Click">
+                                <Border
+                                    Padding="7,4"
+                                    Background="#2B2414"
+                                    BorderBrush="{StaticResource VFWarningBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="3">
+                                    <TextBlock
+                                        x:Name="WarningCountText"
+                                        FontSize="11"
+                                        Text="0 Warnings" />
+                                </Border>
+                            </Button>
+                            <Button
+                                x:Name="MessageFilterButton"
+                                Padding="0"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Click="MessageFilterButton_Click">
+                                <Border
+                                    Padding="7,4"
+                                    Background="#142231"
+                                    BorderBrush="{StaticResource VFAccentBlueBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="3">
+                                    <TextBlock
+                                        x:Name="MessageCountText"
+                                        FontSize="11"
+                                        Text="0 Messages" />
+                                </Border>
+                            </Button>
                         </StackPanel>
                         <AutoSuggestBox
+                            x:Name="DiagnosticsSearchBox"
                             Grid.Column="2"
                             Width="170"
                             Height="28"
-                            PlaceholderText="Search Error List" />
+                            PlaceholderText="Search Error List"
+                            TextChanged="DiagnosticsSearchBox_TextChanged" />
                     </Grid>
                     <Grid Grid.Row="2">
                         <Grid.RowDefinitions>
@@ -863,6 +1078,7 @@
                                 Text="Line" />
                         </Grid>
                         <TabView
+                            x:Name="DiagnosticsTabs"
                             Grid.Row="1"
                             IsAddTabButtonVisible="False"
                             TabWidthMode="SizeToContent">
@@ -893,13 +1109,13 @@
                                     </Grid.RowDefinitions>
                                     <TextBox
                                         x:Name="TerminalOutputTextBox"
+                                        Padding="10,6"
                                         AcceptsReturn="True"
                                         Background="{StaticResource VFEditorBrush}"
                                         BorderThickness="0"
                                         FontFamily="Cascadia Mono"
                                         FontSize="12"
                                         IsReadOnly="True"
-                                        Padding="10,6"
                                         TextWrapping="NoWrap" />
                                     <Grid Grid.Row="1" Margin="8,3">
                                         <Grid.ColumnDefinitions>
@@ -909,6 +1125,7 @@
                                         <TextBox
                                             x:Name="TerminalCommandBox"
                                             Height="30"
+                                            KeyDown="TerminalCommandBox_KeyDown"
                                             PlaceholderText="PowerShell command" />
                                         <Button
                                             Grid.Column="1"
@@ -944,13 +1161,13 @@
                                     <TextBox
                                         x:Name="OutputTextBox"
                                         Grid.Row="1"
+                                        Padding="10,6"
                                         AcceptsReturn="True"
                                         Background="{StaticResource VFEditorBrush}"
                                         BorderThickness="0"
                                         FontFamily="Cascadia Mono"
                                         FontSize="12"
                                         IsReadOnly="True"
-                                        Padding="10,6"
                                         TextWrapping="NoWrap" />
                                 </Grid>
                             </TabViewItem>
@@ -960,22 +1177,36 @@
                                     Style="{StaticResource VFStatusTextBlockStyle}"
                                     Text="Use Developer PowerShell for workspace commands." />
                             </TabViewItem>
-                            <TabViewItem x:Name="CallStackTab" Header="Call Stack" Visibility="Collapsed">
-                                <ListView
-                                    x:Name="CallStackList"
-                                    SelectionChanged="CallStackList_SelectionChanged" />
+                            <TabViewItem
+                                x:Name="CallStackTab"
+                                Header="Call Stack"
+                                Visibility="Collapsed">
+                                <ListView x:Name="CallStackList" SelectionChanged="CallStackList_SelectionChanged" />
                             </TabViewItem>
-                            <TabViewItem x:Name="LocalsTab" Header="Locals" Visibility="Collapsed">
-                                <ListView x:Name="LocalsList" />
+                            <TabViewItem
+                                x:Name="LocalsTab"
+                                Header="Locals"
+                                Visibility="Collapsed">
+                                <TreeView x:Name="LocalsTree" Expanding="LocalsTree_Expanding" />
                             </TabViewItem>
                         </TabView>
                     </Grid>
                 </Grid>
             </Grid>
 
-            <Border Grid.Column="4" Background="{StaticResource VFBorderBrush}" />
+            <xtwc:GridSplitter
+                Grid.Column="4"
+                Width="4"
+                HorizontalAlignment="Stretch"
+                Background="{StaticResource VFBorderBrush}"
+                PointerReleased="LayoutSplitter_PointerReleased"
+                ResizeBehavior="PreviousAndNext"
+                ResizeDirection="Columns" />
 
-            <Grid x:Name="RightToolWindowGrid" Grid.Column="5" Background="{StaticResource VFPanelBrush}">
+            <Grid
+                x:Name="RightToolWindowGrid"
+                Grid.Column="5"
+                Background="{StaticResource VFPanelBrush}">
                 <TabView
                     x:Name="RightToolTabs"
                     IsAddTabButtonVisible="False"
@@ -1011,13 +1242,25 @@
                                     Grid.Column="2"
                                     Orientation="Horizontal"
                                     Spacing="2">
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Auto hide">
+                                    <Button
+                                        Click="DockCommand_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        Tag="autohide-right"
+                                        ToolTipService.ToolTip="Auto hide">
                                         <FontIcon FontSize="13" Glyph="&#xE77A;" />
                                     </Button>
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Float window">
+                                    <Button
+                                        Click="DockCommand_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        Tag="float:solutionExplorer"
+                                        ToolTipService.ToolTip="Float window">
                                         <FontIcon FontSize="13" Glyph="&#xE740;" />
                                     </Button>
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Close">
+                                    <Button
+                                        Click="DockCommand_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        Tag="close-right"
+                                        ToolTipService.ToolTip="Close">
                                         <FontIcon FontSize="13" Glyph="&#xE711;" />
                                     </Button>
                                 </StackPanel>
@@ -1030,20 +1273,32 @@
                                     Padding="10,8"
                                     Orientation="Horizontal"
                                     Spacing="6">
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Properties">
+                                    <AutoSuggestBox
+                                        x:Name="SolutionExplorerSearchBox"
+                                        Width="150"
+                                        PlaceholderText="Search"
+                                        TextChanged="SolutionExplorerSearchBox_TextChanged" />
+                                    <Button
+                                        Click="SolutionExplorerProperties_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        ToolTipService.ToolTip="Properties">
                                         <FontIcon FontSize="13" Glyph="&#xE713;" />
                                     </Button>
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Show all files">
+                                    <Button
+                                        Click="SolutionExplorerShowAllFiles_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        ToolTipService.ToolTip="Show all files">
                                         <FontIcon FontSize="13" Glyph="&#xE8A5;" />
                                     </Button>
-                                    <Button Click="RefreshSolutionExplorer_Click" Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Refresh">
+                                    <Button
+                                        Click="RefreshSolutionExplorer_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        ToolTipService.ToolTip="Refresh">
                                         <FontIcon FontSize="13" Glyph="&#xE72C;" />
                                     </Button>
                                 </StackPanel>
                             </Border>
-                            <controls:SolutionExplorerControl
-                                x:Name="SolutionExplorer"
-                                Grid.Row="2" />
+                            <controls:SolutionExplorerControl x:Name="SolutionExplorer" Grid.Row="2" />
                         </Grid>
                     </TabViewItem>
                     <TabViewItem Header="Git Changes">
@@ -1076,10 +1331,18 @@
                                     Grid.Column="2"
                                     Orientation="Horizontal"
                                     Spacing="2">
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Float window">
+                                    <Button
+                                        Click="DockCommand_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        Tag="float:gitChanges"
+                                        ToolTipService.ToolTip="Float window">
                                         <FontIcon FontSize="13" Glyph="&#xE740;" />
                                     </Button>
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Close">
+                                    <Button
+                                        Click="DockCommand_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        Tag="close-right"
+                                        ToolTipService.ToolTip="Close">
                                         <FontIcon FontSize="13" Glyph="&#xE711;" />
                                     </Button>
                                 </StackPanel>
@@ -1092,9 +1355,18 @@
                                     Padding="10,8"
                                     Orientation="Horizontal"
                                     Spacing="6">
-                                    <Button Click="RefreshGitChanges_Click" Padding="8,4" Content="Refresh" />
-                                    <Button Padding="8,4" Content="Pull" />
-                                    <Button Padding="8,4" Content="Push" />
+                                    <Button
+                                        Padding="8,4"
+                                        Click="RefreshGitChanges_Click"
+                                        Content="Refresh" />
+                                    <Button
+                                        Padding="8,4"
+                                        Click="GitPull_Click"
+                                        Content="Pull" />
+                                    <Button
+                                        Padding="8,4"
+                                        Click="GitPush_Click"
+                                        Content="Push" />
                                     <TextBlock
                                         x:Name="GitChangeSummaryText"
                                         VerticalAlignment="Center"
@@ -1118,13 +1390,13 @@
                                     BorderThickness="1">
                                     <TextBox
                                         x:Name="GitDiffOutputTextBox"
+                                        Padding="8"
                                         AcceptsReturn="True"
                                         Background="{StaticResource VFEditorBrush}"
                                         BorderThickness="0"
                                         FontFamily="Cascadia Mono"
                                         FontSize="11"
                                         IsReadOnly="True"
-                                        Padding="8"
                                         TextWrapping="NoWrap" />
                                 </Border>
                             </Grid>
@@ -1160,10 +1432,18 @@
                                     Grid.Column="2"
                                     Orientation="Horizontal"
                                     Spacing="2">
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Float window">
+                                    <Button
+                                        Click="DockCommand_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        Tag="float:properties"
+                                        ToolTipService.ToolTip="Float window">
                                         <FontIcon FontSize="13" Glyph="&#xE740;" />
                                     </Button>
-                                    <Button Style="{StaticResource VFIconButtonStyle}" ToolTipService.ToolTip="Close">
+                                    <Button
+                                        Click="DockCommand_Click"
+                                        Style="{StaticResource VFIconButtonStyle}"
+                                        Tag="close-right"
+                                        ToolTipService.ToolTip="Close">
                                         <FontIcon FontSize="13" Glyph="&#xE711;" />
                                     </Button>
                                 </StackPanel>
@@ -1182,23 +1462,64 @@
                                     <RowDefinition Height="30" />
                                     <RowDefinition Height="30" />
                                     <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock Text="Name" />
-                                <TextBlock Grid.Column="1" Text="VisualForge" />
+                                <TextBlock
+                                    x:Name="PropertyNameValue"
+                                    Grid.Column="1"
+                                    Text="No document"
+                                    TextTrimming="CharacterEllipsis" />
                                 <TextBlock Grid.Row="1" Text="Kind" />
                                 <TextBlock
+                                    x:Name="PropertyKindValue"
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     Text="WinUI 3 C++/WinRT" />
-                                <TextBlock Grid.Row="2" Text="Platform" />
+                                <TextBlock Grid.Row="2" Text="Path" />
                                 <TextBlock
+                                    x:Name="PropertyPathValue"
                                     Grid.Row="2"
                                     Grid.Column="1"
+                                    Text="No document"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock Grid.Row="3" Text="Configuration" />
+                                <TextBlock
+                                    x:Name="PropertyConfigurationValue"
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Text="Debug" />
+                                <TextBlock Grid.Row="4" Text="Platform" />
+                                <TextBlock
+                                    x:Name="PropertyPlatformValue"
+                                    Grid.Row="4"
+                                    Grid.Column="1"
                                     Text="x64" />
+                                <TextBlock Grid.Row="5" Text="State" />
+                                <TextBlock
+                                    x:Name="PropertyStateValue"
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Text="No document" />
+                                <Button
+                                    x:Name="SetStartupProjectButton"
+                                    Grid.Row="6"
+                                    Grid.Column="1"
+                                    Margin="0,8,0,0"
+                                    HorizontalAlignment="Left"
+                                    Click="SetStartupProject_Click"
+                                    Content="Set as Startup Project"
+                                    Visibility="Collapsed" />
                             </Grid>
                         </Grid>
                     </TabViewItem>
-                    <TabViewItem x:Name="DebugToolsTab" Header="Debug Tools" Visibility="Collapsed">
+                    <TabViewItem
+                        x:Name="DebugToolsTab"
+                        Header="Debug Tools"
+                        Visibility="Collapsed">
                         <Grid Background="{StaticResource VFPanelBrush}">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -1219,15 +1540,69 @@
                                     x:Name="DebugSessionText"
                                     Style="{StaticResource VFStatusTextBlockStyle}"
                                     Text="No debug session" />
-                                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2">
-                                    <Button Click="ContinueDebug_Click" Content="&#xE768;" ToolTipService.ToolTip="Continue" />
-                                    <Button Click="StepOverDebug_Click" Content="&#xE7A7;" ToolTipService.ToolTip="Step over" />
-                                    <Button Click="StepInDebug_Click" Content="&#xE7A7;" ToolTipService.ToolTip="Step in" />
-                                    <Button Click="StepOutDebug_Click" Content="&#xE7A7;" ToolTipService.ToolTip="Step out" />
-                                    <Button Click="StopDebug_Click" Content="&#xE71A;" ToolTipService.ToolTip="Stop debugging" />
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Orientation="Horizontal"
+                                    Spacing="2">
+                                    <Button
+                                        Click="ContinueDebug_Click"
+                                        Content="&#xE768;"
+                                        ToolTipService.ToolTip="Continue" />
+                                    <Button
+                                        Click="StepOverDebug_Click"
+                                        Content="&#xE7A7;"
+                                        ToolTipService.ToolTip="Step over" />
+                                    <Button
+                                        Click="StepInDebug_Click"
+                                        Content="&#xE7A7;"
+                                        ToolTipService.ToolTip="Step in" />
+                                    <Button
+                                        Click="StepOutDebug_Click"
+                                        Content="&#xE7A7;"
+                                        ToolTipService.ToolTip="Step out" />
+                                    <Button
+                                        Click="StopDebug_Click"
+                                        Content="&#xE71A;"
+                                        ToolTipService.ToolTip="Stop debugging" />
                                 </StackPanel>
                             </Grid>
-                            <ListView x:Name="DebugEventsList" Grid.Row="2" Margin="6" />
+                            <ListView
+                                x:Name="DebugEventsList"
+                                Grid.Row="2"
+                                Margin="6" />
+                        </Grid>
+                    </TabViewItem>
+                    <TabViewItem Header="Document Outline">
+                        <Grid Background="{StaticResource VFPanelBrush}">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid
+                                Padding="8,6"
+                                BorderBrush="{StaticResource VFBorderBrush}"
+                                BorderThickness="0,0,0,1">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="Document Outline" />
+                                <Button
+                                    Grid.Column="1"
+                                    Click="RefreshDocumentOutline_Click"
+                                    Style="{StaticResource VFIconButtonStyle}"
+                                    ToolTipService.ToolTip="Refresh document outline">
+                                    <FontIcon FontSize="13" Glyph="&#xE72C;" />
+                                </Button>
+                            </Grid>
+                            <ListView
+                                x:Name="DocumentOutlineList"
+                                Grid.Row="1"
+                                Margin="4"
+                                SelectionChanged="DocumentOutlineList_SelectionChanged" />
                         </Grid>
                     </TabViewItem>
                 </TabView>

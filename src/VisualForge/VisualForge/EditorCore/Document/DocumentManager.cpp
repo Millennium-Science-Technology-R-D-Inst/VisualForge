@@ -10,6 +10,12 @@ namespace VisualForge::EditorCore::Document
 {
     namespace
     {
+        struct DecodedFile
+        {
+            std::wstring Text;
+            TextEncoding Encoding{ TextEncoding::Utf8 };
+        };
+
         void AppendWide(std::wstring& output, std::uint32_t codePoint)
         {
             if (codePoint <= 0xFFFF)
@@ -24,10 +30,41 @@ namespace VisualForge::EditorCore::Document
             }
         }
 
-        std::wstring DecodeUtf8(std::vector<char> const& bytes)
+        DecodedFile DecodeText(std::vector<char> const& bytes)
         {
-            std::wstring output;
+            DecodedFile result;
+            auto& output = result.Text;
             output.reserve(bytes.size());
+
+			if (bytes.size() >= 2
+				&& static_cast<unsigned char>(bytes[0]) == 0xFF
+				&& static_cast<unsigned char>(bytes[1]) == 0xFE)
+			{
+				result.Encoding = TextEncoding::Utf16Le;
+				output.reserve((bytes.size() - 2) / 2);
+				for (std::size_t index = 2; index + 1 < bytes.size(); index += 2)
+				{
+					output.push_back(static_cast<wchar_t>(
+						static_cast<unsigned char>(bytes[index])
+						| (static_cast<unsigned char>(bytes[index + 1]) << 8)));
+				}
+				return result;
+			}
+
+			if (bytes.size() >= 2
+				&& static_cast<unsigned char>(bytes[0]) == 0xFE
+				&& static_cast<unsigned char>(bytes[1]) == 0xFF)
+			{
+				result.Encoding = TextEncoding::Utf16Be;
+				output.reserve((bytes.size() - 2) / 2);
+				for (std::size_t index = 2; index + 1 < bytes.size(); index += 2)
+				{
+					output.push_back(static_cast<wchar_t>(
+						(static_cast<unsigned char>(bytes[index]) << 8)
+						| static_cast<unsigned char>(bytes[index + 1])));
+				}
+				return result;
+			}
 
             std::size_t index = bytes.size() >= 3
                 && static_cast<unsigned char>(bytes[0]) == 0xEF
@@ -35,6 +72,10 @@ namespace VisualForge::EditorCore::Document
                 && static_cast<unsigned char>(bytes[2]) == 0xBF
                 ? 3
                 : 0;
+            if (index != 0)
+            {
+                result.Encoding = TextEncoding::Utf8Bom;
+            }
 
             while (index < bytes.size())
             {
@@ -89,10 +130,10 @@ namespace VisualForge::EditorCore::Document
                 AppendWide(output, valid ? codePoint : L'?');
             }
 
-            return output;
+            return result;
         }
 
-        std::wstring ReadUtf8File(std::filesystem::path const& path)
+        DecodedFile ReadFile(std::filesystem::path const& path)
         {
             std::ifstream stream{ path, std::ios::binary };
             if (!stream)
@@ -105,8 +146,13 @@ namespace VisualForge::EditorCore::Document
                 std::istreambuf_iterator<char>{}
             };
 
-            return DecodeUtf8(bytes);
+            return DecodeText(bytes);
         }
+    }
+
+    std::wstring DocumentManager::ReadTextFile(std::filesystem::path const& path)
+    {
+        return ReadFile(path).Text;
     }
 
     TextDocument& DocumentManager::Open(std::filesystem::path path)
@@ -115,7 +161,9 @@ namespace VisualForge::EditorCore::Document
         auto [it, inserted] = m_documents.try_emplace(key, path);
         if (inserted && std::filesystem::exists(path))
         {
-            it->second.LoadText(ReadUtf8File(path));
+            auto decoded = ReadFile(path);
+            it->second.SetEncoding(decoded.Encoding);
+            it->second.LoadText(std::move(decoded.Text));
         }
 
         return it->second;
@@ -148,10 +196,15 @@ namespace VisualForge::EditorCore::Document
     bool DocumentManager::SaveAs(std::filesystem::path const& oldPath, std::filesystem::path newPath)
     {
         auto found = m_documents.find(oldPath.wstring());
-        if (found == m_documents.end())
+        if (found == m_documents.end() || newPath.empty())
         {
             return false;
         }
+
+		if (oldPath.wstring() != newPath.wstring() && m_documents.contains(newPath.wstring()))
+		{
+			return false;
+		}
 
         found->second.SaveAs(newPath);
         auto node = m_documents.extract(found);

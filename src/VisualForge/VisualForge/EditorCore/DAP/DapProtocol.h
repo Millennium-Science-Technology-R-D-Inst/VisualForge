@@ -35,12 +35,14 @@ namespace VisualForge::EditorCore::DAP
         std::wstring Name;
         std::wstring Value;
         std::wstring Type;
+        int VariablesReference{};
     };
 
     struct DapProtocolMessage
     {
         DapMessageKind Kind{ DapMessageKind::Unknown };
         Protocol::JsonMessageSummary Summary;
+        int ThreadId{};
         std::vector<DapStackFrame> StackFrames;
         std::vector<DapScope> Scopes;
         std::vector<DapVariable> Variables;

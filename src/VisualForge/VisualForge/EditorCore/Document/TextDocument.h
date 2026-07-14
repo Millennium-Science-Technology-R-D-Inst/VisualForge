@@ -12,6 +12,14 @@
 
 namespace VisualForge::EditorCore::Document
 {
+    enum class TextEncoding
+    {
+        Utf8,
+        Utf8Bom,
+        Utf16Le,
+        Utf16Be
+    };
+
     class TextDocument final
     {
     public:
@@ -19,6 +27,7 @@ namespace VisualForge::EditorCore::Document
         explicit TextDocument(std::filesystem::path path);
 
         void LoadText(std::wstring text);
+        void SetEncoding(TextEncoding encoding) noexcept;
         void Save();
         void SaveAs(std::filesystem::path path);
         void Insert(std::size_t position, std::wstring text);
@@ -46,6 +55,7 @@ namespace VisualForge::EditorCore::Document
         Viewport::ViewportController m_viewport;
         Cursor::CursorManager m_cursors;
         Editing::EditHistory m_history;
+        TextEncoding m_encoding{ TextEncoding::Utf8 };
         bool m_isDirty{ false };
     };
 }

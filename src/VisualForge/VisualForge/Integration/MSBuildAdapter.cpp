@@ -69,13 +69,30 @@ namespace VisualForge::Integration
 
     Tool::ToolCommand MSBuildAdapter::CreateBuildCommand(ProjectContext const& context) const
     {
+        return CreateTargetCommand(context, L"Build", L"Build");
+    }
+
+    Tool::ToolCommand MSBuildAdapter::CreateRebuildCommand(ProjectContext const& context) const
+    {
+        return CreateTargetCommand(context, L"Rebuild", L"Rebuild");
+    }
+
+    Tool::ToolCommand MSBuildAdapter::CreateCleanCommand(ProjectContext const& context) const
+    {
+        return CreateTargetCommand(context, L"Clean", L"Clean");
+    }
+
+    Tool::ToolCommand MSBuildAdapter::CreateTargetCommand(
+        ProjectContext const& context,
+        std::wstring target,
+        std::wstring description) const
+    {
         auto buildPath = SelectBuildPath(context);
-        std::vector<std::wstring> arguments{ buildPath.wstring(), L"/t:Build", L"/m", L"/nologo" };
+        std::vector<std::wstring> arguments{ buildPath.wstring(), L"/t:" + std::move(target), L"/m", L"/nologo" };
 
         auto properties = CreateConfigurationProperties(context);
         arguments.insert(arguments.end(), properties.begin(), properties.end());
-
-        return m_registry.CreateCommand(Tool::ToolKind::MSBuild, std::move(arguments), context.WorkspaceRoot, L"Build project");
+        return m_registry.CreateCommand(Tool::ToolKind::MSBuild, std::move(arguments), context.WorkspaceRoot, std::move(description));
     }
 
     Tool::ToolCommand MSBuildAdapter::CreateGenerateCompileCommandsCommand(ProjectContext const& context) const

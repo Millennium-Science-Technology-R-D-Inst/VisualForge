@@ -146,59 +146,109 @@ namespace VisualForge::EditorCore::Protocol
 
     std::wstring JsonMessageSummaryParser::WidenUtf8Lossy(std::string_view value)
     {
-        std::wstring result;
-        result.reserve(value.size());
-        for (auto const current : value)
+        if (value.empty())
         {
-            result.push_back(static_cast<unsigned char>(current) < 0x80
-                ? static_cast<wchar_t>(current)
-                : L'?');
+			return {};
         }
 
-        return result;
+		auto const required = MultiByteToWideChar(
+			CP_UTF8,
+			MB_ERR_INVALID_CHARS,
+			value.data(),
+			static_cast<int>(value.size()),
+			nullptr,
+			0);
+		if (required <= 0)
+		{
+			return std::wstring{ value.begin(), value.end() };
+		}
+
+		std::wstring result(static_cast<std::size_t>(required), L'\0');
+		MultiByteToWideChar(
+			CP_UTF8,
+			MB_ERR_INVALID_CHARS,
+			value.data(),
+			static_cast<int>(value.size()),
+			result.data(),
+			required);
+		return result;
     }
 
     std::string JsonMessageSummaryParser::UnescapeJsonString(std::string_view value)
     {
-        std::string result;
-        result.reserve(value.size());
-        auto escaped = false;
-        for (auto const current : value)
+        auto appendUtf8 = [](std::string& output, std::uint32_t codePoint)
         {
-            if (escaped)
+            if (codePoint <= 0x7F)
             {
-                switch (current)
-                {
-                case '"':
-                    result.push_back('"');
-                    break;
-                case '\\':
-                    result.push_back('\\');
-                    break;
-                case 'n':
-                    result.push_back('\n');
-                    break;
-                case 'r':
-                    result.push_back('\r');
-                    break;
-                case 't':
-                    result.push_back('\t');
-                    break;
-                default:
-                    result.push_back(current);
-                    break;
-                }
-
-                escaped = false;
+                output.push_back(static_cast<char>(codePoint));
             }
-            else if (current == '\\')
+            else if (codePoint <= 0x7FF)
             {
-                escaped = true;
+                output.push_back(static_cast<char>(0xC0 | (codePoint >> 6)));
+                output.push_back(static_cast<char>(0x80 | (codePoint & 0x3F)));
+            }
+            else if (codePoint <= 0xFFFF)
+            {
+                output.push_back(static_cast<char>(0xE0 | (codePoint >> 12)));
+                output.push_back(static_cast<char>(0x80 | ((codePoint >> 6) & 0x3F)));
+                output.push_back(static_cast<char>(0x80 | (codePoint & 0x3F)));
             }
             else
             {
-                result.push_back(current);
+                output.push_back(static_cast<char>(0xF0 | (codePoint >> 18)));
+                output.push_back(static_cast<char>(0x80 | ((codePoint >> 12) & 0x3F)));
+                output.push_back(static_cast<char>(0x80 | ((codePoint >> 6) & 0x3F)));
+                output.push_back(static_cast<char>(0x80 | (codePoint & 0x3F)));
             }
+        };
+
+        std::string result;
+        result.reserve(value.size());
+        for (std::size_t index = 0; index < value.size(); ++index)
+        {
+            auto const current = value[index];
+            if (current != '\\' || index + 1 >= value.size())
+            {
+				result.push_back(current);
+				continue;
+            }
+
+			auto const escaped = value[++index];
+			switch (escaped)
+            {
+			case '"': result.push_back('"'); break;
+			case '\\': result.push_back('\\'); break;
+			case '/': result.push_back('/'); break;
+			case 'b': result.push_back('\b'); break;
+			case 'f': result.push_back('\f'); break;
+			case 'n': result.push_back('\n'); break;
+			case 'r': result.push_back('\r'); break;
+			case 't': result.push_back('\t'); break;
+			case 'u':
+				if (index + 4 < value.size())
+				{
+					std::uint32_t codePoint{};
+					bool valid = true;
+					for (std::size_t digit = 0; digit < 4; ++digit)
+					{
+						auto const hex = value[index + 1 + digit];
+						codePoint <<= 4;
+						if (hex >= '0' && hex <= '9') codePoint += static_cast<std::uint32_t>(hex - '0');
+						else if (hex >= 'a' && hex <= 'f') codePoint += static_cast<std::uint32_t>(hex - 'a' + 10);
+						else if (hex >= 'A' && hex <= 'F') codePoint += static_cast<std::uint32_t>(hex - 'A' + 10);
+						else valid = false;
+					}
+					if (valid)
+					{
+						appendUtf8(result, codePoint);
+						index += 4;
+						break;
+					}
+				}
+				result.push_back('u');
+				break;
+			default: result.push_back(escaped); break;
+		    }
         }
 
         return result;

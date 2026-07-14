@@ -163,6 +163,7 @@
     <ClInclude Include="Integration\DebugAdapter.h" />
     <ClInclude Include="Integration\GitAdapter.h" />
     <ClInclude Include="Integration\MSBuildAdapter.h" />
+    <ClInclude Include="Integration\ProjectWorkspaceService.h" />
     <ClInclude Include="Integration\NuGetAdapter.h" />
     <ClInclude Include="Integration\VcpkgAdapter.h" />
     <ClInclude Include="Tool\ToolCommand.h" />
@@ -246,6 +247,7 @@
     <ClCompile Include="Integration\DebugAdapter.cpp" />
     <ClCompile Include="Integration\GitAdapter.cpp" />
     <ClCompile Include="Integration\MSBuildAdapter.cpp" />
+    <ClCompile Include="Integration\ProjectWorkspaceService.cpp" />
     <ClCompile Include="Integration\NuGetAdapter.cpp" />
     <ClCompile Include="Integration\VcpkgAdapter.cpp" />
     <ClCompile Include="Tool\ToolCommand.cpp" />

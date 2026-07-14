@@ -9,5 +9,18 @@
     <TreeView
         x:Name="WorkspaceTree"
         Margin="6"
-        SelectionChanged="WorkspaceTree_SelectionChanged" />
+        SelectionChanged="WorkspaceTree_SelectionChanged">
+        <TreeView.ContextFlyout>
+            <MenuFlyout>
+                <MenuFlyoutItem Text="Open" Click="ContextOpen_Click" />
+                <MenuFlyoutItem Text="Properties" Click="ContextProperties_Click" />
+                <MenuFlyoutItem Text="Set as Startup Project" Click="ContextStartup_Click" />
+                <MenuFlyoutItem Text="Add New Item" Click="ContextAddItem_Click" />
+                <MenuFlyoutItem Text="Add Existing Item" Click="ContextAddExistingItem_Click" />
+                <MenuFlyoutItem Text="Remove From Project" Click="ContextRemoveFromProject_Click" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Text="Refresh" Click="ContextRefresh_Click" />
+            </MenuFlyout>
+        </TreeView.ContextFlyout>
+    </TreeView>
 </UserControl>

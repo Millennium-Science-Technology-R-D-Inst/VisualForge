@@ -42,7 +42,7 @@ namespace VisualForge::EditorCore::LSP
                 return;
             }
 
-            SendJson(R"({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities":{}}})");
+            SendJson(R"({"jsonrpc":"2.0","id":1,"method":"initialize","params":{"capabilities":{"textDocument":{"semanticTokens":{"requests":{"full":true}}}}}})");
             SendJson(R"({"jsonrpc":"2.0","method":"initialized","params":{}})");
             m_state = LspClientState::Running;
         }
@@ -75,6 +75,14 @@ namespace VisualForge::EditorCore::LSP
             + R"(,"text":")"
             + Narrow(text)
             + R"("}}})";
+        SendJson(std::move(payload));
+    }
+
+    void LspClient::DidCloseFile(std::wstring const& uri)
+    {
+        auto payload = std::string{ R"({"jsonrpc":"2.0","method":"textDocument/didClose","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("}}})" };
         SendJson(std::move(payload));
     }
 
@@ -134,6 +142,101 @@ namespace VisualForge::EditorCore::LSP
             + R"(,"character":)"
             + std::to_string(column)
             + R"(}}}})" };
+        SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestReferences(std::wstring const& uri, std::size_t line, std::size_t column)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/references","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"(},"position":{"line":)"
+            + std::to_string(line)
+            + R"(,"character":)"
+            + std::to_string(column)
+            + R"(},"context":{"includeDeclaration":true}}})" };
+        SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestRename(std::wstring const& uri, std::size_t line, std::size_t column, std::wstring const& newName)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/rename","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("},"position":{"line":)"
+            + std::to_string(line)
+            + R"(,"character":)"
+            + std::to_string(column)
+            + R"(},"newName":")"
+            + Narrow(newName)
+            + R"("}}})" };
+        SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestSemanticTokens(std::wstring const& uri)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/semanticTokens/full","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("}}})" };
+        SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestFormatting(std::wstring const& uri, std::size_t tabSize, bool insertSpaces)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/formatting","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("},"options":{"tabSize":)"
+            + std::to_string(tabSize)
+            + R"(,"insertSpaces":)"
+            + (insertSpaces ? "true" : "false")
+            + R"(}}})" };
+        SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestCodeActions(std::wstring const& uri, std::size_t line, std::size_t column,
+        std::size_t endLine, std::size_t endColumn)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/codeAction","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("},"range":{"start":{"line":)"
+            + std::to_string(line)
+            + R"(,"character":)"
+            + std::to_string(column)
+            + R"(},"end":{"line":)"
+            + std::to_string(endLine)
+            + R"(,"character":)"
+            + std::to_string(endColumn)
+            + R"(}},"context":{"diagnostics":[],"triggerKind":1}}})" };
+        SendJson(std::move(payload));
+        return requestId;
+    }
+
+    int LspClient::RequestDocumentSymbols(std::wstring const& uri)
+    {
+        auto const requestId = m_nextRequestId++;
+        auto payload = std::string{ R"({"jsonrpc":"2.0","id":)"
+            + std::to_string(requestId)
+            + R"(,"method":"textDocument/documentSymbol","params":{"textDocument":{"uri":")"
+            + Narrow(uri)
+            + R"("}}})" };
         SendJson(std::move(payload));
         return requestId;
     }

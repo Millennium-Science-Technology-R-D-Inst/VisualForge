@@ -30,10 +30,18 @@ namespace VisualForge::EditorCore::LSP
         void Stop();
 
         void DidOpenFile(std::wstring const& uri, std::wstring const& languageId, std::wstring const& text);
+        void DidCloseFile(std::wstring const& uri);
         void DidChange(std::wstring const& uri, std::wstring const& text);
         int RequestCompletion(std::wstring const& uri, std::size_t line, std::size_t column);
         int RequestHover(std::wstring const& uri, std::size_t line, std::size_t column);
         int RequestDefinition(std::wstring const& uri, std::size_t line, std::size_t column);
+        int RequestReferences(std::wstring const& uri, std::size_t line, std::size_t column);
+        int RequestRename(std::wstring const& uri, std::size_t line, std::size_t column, std::wstring const& newName);
+        int RequestSemanticTokens(std::wstring const& uri);
+        int RequestFormatting(std::wstring const& uri, std::size_t tabSize = 4, bool insertSpaces = true);
+        int RequestCodeActions(std::wstring const& uri, std::size_t line, std::size_t column,
+            std::size_t endLine, std::size_t endColumn);
+        int RequestDocumentSymbols(std::wstring const& uri);
 
         [[nodiscard]] std::vector<JsonRpcMessage> DrainReceivedMessages();
         [[nodiscard]] std::vector<LspProtocolMessage> DrainProtocolMessages();

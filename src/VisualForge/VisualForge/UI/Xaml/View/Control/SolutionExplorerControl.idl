@@ -6,5 +6,10 @@ namespace VisualForge.UI.Xaml.View.Control
         SolutionExplorerControl();
         void LoadWorkspace(String rootPath, String solutionPath);
         event Windows.Foundation.TypedEventHandler<Object, String> FileOpenRequested;
+        event Windows.Foundation.TypedEventHandler<Object, String> ProjectSelectedRequested;
+        event Windows.Foundation.TypedEventHandler<Object, String> ContextActionRequested;
+        void SetStartupProject(String projectPath);
+        void SetShowAllFiles(Boolean value);
+        void SetFilter(String value);
     }
 }

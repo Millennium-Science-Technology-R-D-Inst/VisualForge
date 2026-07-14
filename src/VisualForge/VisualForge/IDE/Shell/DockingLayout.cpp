@@ -42,6 +42,7 @@ namespace VisualForge::IDE::Shell
             { L"output", L"Output", DockSide::Bottom, DockState::Docked, true, true, true, commands, DockSide::Bottom },
             { L"terminal", L"Developer PowerShell", DockSide::Bottom, DockState::Docked, true, true, true, commands, DockSide::Bottom },
             { L"diagnostics", L"Diagnostic Tools", DockSide::Right, DockState::Floating, true, true, true, commands, DockSide::Right },
+            { L"documentOutline", L"Document Outline", DockSide::Right, DockState::Docked, true, true, true, commands, DockSide::Right },
         };
 
         return layout;

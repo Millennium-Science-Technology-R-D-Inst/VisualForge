@@ -59,6 +59,29 @@ namespace VisualForge::EditorCore::Document
 
             return output;
         }
+
+        std::vector<char> EncodeUtf16(std::wstring_view text, bool bigEndian)
+        {
+            std::vector<char> output;
+            output.reserve(text.size() * 2 + 2);
+            output.push_back(static_cast<char>(bigEndian ? 0xFE : 0xFF));
+            output.push_back(static_cast<char>(bigEndian ? 0xFF : 0xFE));
+            for (auto const character : text)
+            {
+                auto const value = static_cast<std::uint16_t>(character);
+                if (bigEndian)
+                {
+                    output.push_back(static_cast<char>((value >> 8) & 0xFF));
+                    output.push_back(static_cast<char>(value & 0xFF));
+                }
+                else
+                {
+                    output.push_back(static_cast<char>(value & 0xFF));
+                    output.push_back(static_cast<char>((value >> 8) & 0xFF));
+                }
+            }
+            return output;
+        }
     }
 
     TextDocument::TextDocument(std::filesystem::path path) :
@@ -69,9 +92,15 @@ namespace VisualForge::EditorCore::Document
     void TextDocument::LoadText(std::wstring text)
     {
         m_buffer.Load(std::move(text));
+        m_history.Clear();
         m_layout.Reflow(m_buffer);
         m_viewport.UpdateLayout(m_layout);
         m_isDirty = false;
+    }
+
+    void TextDocument::SetEncoding(TextEncoding encoding) noexcept
+    {
+        m_encoding = encoding;
     }
 
     void TextDocument::Save()
@@ -82,8 +111,18 @@ namespace VisualForge::EditorCore::Document
         }
 
         auto snapshot = m_buffer.CreateSnapshot();
-        auto bytes = EncodeUtf8(snapshot.Text());
-        std::ofstream stream{ m_path, std::ios::binary | std::ios::trunc };
+        auto bytes = m_encoding == TextEncoding::Utf16Le
+            ? EncodeUtf16(snapshot.Text(), false)
+            : m_encoding == TextEncoding::Utf16Be
+            ? EncodeUtf16(snapshot.Text(), true)
+            : EncodeUtf8(snapshot.Text());
+        if (m_encoding == TextEncoding::Utf8Bom)
+        {
+            bytes.insert(bytes.begin(), { static_cast<char>(0xEF), static_cast<char>(0xBB), static_cast<char>(0xBF) });
+        }
+        auto temporaryPath = m_path;
+        temporaryPath += L".visualforge.tmp";
+        std::ofstream stream{ temporaryPath, std::ios::binary | std::ios::trunc };
         if (!stream)
         {
             throw std::runtime_error("TextDocument::Save could not open the destination file.");
@@ -93,14 +132,41 @@ namespace VisualForge::EditorCore::Document
         {
             stream.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
         }
+		stream.flush();
+		if (!stream)
+		{
+			stream.close();
+			std::error_code cleanupError;
+			std::filesystem::remove(temporaryPath, cleanupError);
+			throw std::runtime_error("TextDocument::Save could not write the destination file.");
+		}
+		stream.close();
+		if (!MoveFileExW(
+			temporaryPath.c_str(),
+			m_path.c_str(),
+			MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+		{
+			std::error_code cleanupError;
+			std::filesystem::remove(temporaryPath, cleanupError);
+			throw std::runtime_error("TextDocument::Save could not replace the destination file.");
+		}
 
         m_isDirty = false;
     }
 
     void TextDocument::SaveAs(std::filesystem::path path)
     {
-        m_path = std::move(path);
-        Save();
+		auto previousPath = m_path;
+		m_path = std::move(path);
+		try
+		{
+			Save();
+		}
+		catch (...)
+		{
+			m_path = std::move(previousPath);
+			throw;
+		}
     }
 
     void TextDocument::Insert(std::size_t position, std::wstring text)

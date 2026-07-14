@@ -69,6 +69,7 @@ namespace VisualForge::IDE::Runtime
     public:
         void Reset();
         void MarkLanguageServiceStarting();
+        void MarkLanguageServiceReady();
         void MarkLanguageServiceStopped();
         void MarkDebugStarting();
         void MarkDebugStopped();

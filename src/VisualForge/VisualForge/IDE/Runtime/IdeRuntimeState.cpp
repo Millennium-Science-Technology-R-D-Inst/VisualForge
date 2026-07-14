@@ -89,6 +89,12 @@ namespace VisualForge::IDE::Runtime
         m_languageService.LastMessage = L"starting clangd";
     }
 
+    void IdeRuntimeState::MarkLanguageServiceReady()
+    {
+        m_languageService.State = RuntimeSubsystemState::Ready;
+        m_languageService.LastMessage = L"clangd ready";
+    }
+
     void IdeRuntimeState::MarkLanguageServiceStopped()
     {
         m_languageService.State = RuntimeSubsystemState::Offline;

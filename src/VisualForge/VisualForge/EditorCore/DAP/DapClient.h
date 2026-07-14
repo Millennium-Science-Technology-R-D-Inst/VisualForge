@@ -22,6 +22,8 @@ namespace VisualForge::EditorCore::DAP
     public:
         [[nodiscard]] bool Start(std::wstring lldbDapPath, std::filesystem::path workingDirectory = {});
         void Stop();
+        // Completes a session whose adapter already reported termination.
+        void Finish();
 
         void Initialize();
         void Launch(std::wstring const& program, std::wstring const& arguments, std::wstring const& cwd, bool stopAtEntry);

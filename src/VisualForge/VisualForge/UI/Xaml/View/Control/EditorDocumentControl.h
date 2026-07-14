@@ -5,6 +5,7 @@
 
 #include <set>
 #include <string>
+#include <vector>
 
 namespace winrt::VisualForge::UI::Xaml::View::Control::implementation
 {
@@ -15,12 +16,22 @@ namespace winrt::VisualForge::UI::Xaml::View::Control::implementation
         winrt::hstring Text() const;
         int32_t SelectionStart() const;
         int32_t SelectionLength() const;
+        int32_t ScrollLine() const;
+        int32_t ScrollColumn() const;
         void SetText(winrt::hstring const& text);
         void ReplaceSelection(winrt::hstring const& text);
         void Select(int32_t start, int32_t length);
+        void SetScrollPosition(int32_t line, int32_t column);
         void FocusEditor();
         void SetBreakpoint(int32_t line, bool enabled);
         void SetDebugLine(int32_t line);
+        void SetSemanticTokens(winrt::hstring const& tokenData);
+        void SetDiagnosticLine(int32_t line, bool enabled);
+        void ClearDiagnosticLines();
+        void CopySelection();
+        void CutSelection();
+        winrt::Windows::Foundation::IAsyncAction PasteClipboardAsync();
+        void SelectAllText();
 
         winrt::event_token TextChanged(
             winrt::Windows::Foundation::TypedEventHandler<winrt::Windows::Foundation::IInspectable, winrt::Windows::Foundation::IInspectable> const& handler);
@@ -37,6 +48,15 @@ namespace winrt::VisualForge::UI::Xaml::View::Control::implementation
         void CompletionKeyboardAccelerator_Invoked(
             winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender,
             winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args);
+        void DuplicateLineKeyboardAccelerator_Invoked(
+            winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender,
+            winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args);
+        void DeleteLineKeyboardAccelerator_Invoked(
+            winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender,
+            winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args);
+        void ToggleCommentKeyboardAccelerator_Invoked(
+            winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender,
+            winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args);
 
         void EditorCanvas_Draw(
             winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender,
@@ -44,10 +64,43 @@ namespace winrt::VisualForge::UI::Xaml::View::Control::implementation
         void EditorCanvas_PointerPressed(
             winrt::Windows::Foundation::IInspectable const& sender,
             winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+        void EditorCanvas_SizeChanged(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& args);
+        void EditorVerticalScrollBar_ValueChanged(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args);
+        void EditorHorizontalScrollBar_ValueChanged(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::Controls::Primitives::RangeBaseValueChangedEventArgs const& args);
         void InputTextBox_TextChanged(
             winrt::Windows::Foundation::IInspectable const& sender,
             winrt::Microsoft::UI::Xaml::Controls::TextChangedEventArgs const& args);
+        void InputTextBox_PointerPressed(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+        void InputTextBox_PointerMoved(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+        void InputTextBox_PointerReleased(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args);
+        void InputTextBox_KeyDown(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::Input::KeyRoutedEventArgs const& args);
         void InputTextBox_SelectionChanged(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void ContextCut_Click(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void ContextCopy_Click(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void ContextPaste_Click(
+            winrt::Windows::Foundation::IInspectable const& sender,
+            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void ContextSelectAll_Click(
             winrt::Windows::Foundation::IInspectable const& sender,
             winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
         void EditorDocumentControl_PointerWheelChanged(
@@ -59,7 +112,14 @@ namespace winrt::VisualForge::UI::Xaml::View::Control::implementation
         void RaiseSelectionChanged();
         void RaiseBreakpointRequested(int32_t line);
         void EnsureCaretVisible();
+        void UpdateScrollBars();
+        void AdjustLineMarkersForEdit(std::size_t start, std::size_t removedLength, std::wstring_view insertedText);
+        void DuplicateCurrentLine();
+        void DeleteCurrentLine();
+        void ToggleComment();
+        [[nodiscard]] std::size_t OffsetFromPoint(winrt::Windows::Foundation::Point const& point);
         [[nodiscard]] std::size_t LineCount() const noexcept;
+        [[nodiscard]] std::size_t LongestLineLength() const noexcept;
 
         std::wstring m_text;
         int32_t m_selectionStart{ 0 };
@@ -67,8 +127,20 @@ namespace winrt::VisualForge::UI::Xaml::View::Control::implementation
         std::size_t m_scrollLine{ 0 };
         std::size_t m_scrollColumn{ 0 };
         std::set<int32_t> m_breakpointLines;
+        std::set<int32_t> m_diagnosticLines;
         int32_t m_debugLine{ 0 };
+        std::size_t m_selectionAnchor{ 0 };
+        bool m_isPointerSelecting{ false };
+        bool m_isUpdatingScrollBars{ false };
         bool m_isLoading{ false };
+        struct SemanticToken
+        {
+            std::size_t Line{};
+            std::size_t Column{};
+            std::size_t Length{};
+            std::size_t Type{};
+        };
+        std::vector<SemanticToken> m_semanticTokens;
         ::VisualForge::EditorCore::Rendering::DirectWriteContext m_dwrite;
         winrt::event<winrt::Windows::Foundation::TypedEventHandler<winrt::Windows::Foundation::IInspectable, winrt::Windows::Foundation::IInspectable>> m_textChanged;
         winrt::event<winrt::Windows::Foundation::TypedEventHandler<winrt::Windows::Foundation::IInspectable, winrt::Windows::Foundation::IInspectable>> m_selectionChanged;

@@ -43,6 +43,15 @@ namespace VisualForge::EditorCore::DAP
         m_state = DapClientState::Stopped;
     }
 
+    void DapClient::Finish()
+    {
+        // The adapter has already ended, so sending disconnect here can race
+        // with its final pipe shutdown. Resetting the session still joins the
+        // reader threads and closes all process handles.
+        m_process.reset();
+        m_state = DapClientState::Stopped;
+    }
+
     void DapClient::Initialize()
     {
         Send(R"({"seq":)" + std::to_string(NextSequence()) + R"(,"type":"request","command":"initialize","arguments":{"clientID":"visualforge","clientName":"VisualForge","adapterID":"lldb","pathFormat":"path","linesStartAt1":true,"columnsStartAt1":true,"supportsVariableType":true}})");
@@ -190,28 +199,58 @@ namespace VisualForge::EditorCore::DAP
 
     std::string DapClient::Narrow(std::wstring const& value)
     {
-        std::string result;
-        result.reserve(value.size());
-        for (auto character : value)
+        if (value.empty())
         {
-            if (character == L'\\')
-            {
-                result += "\\\\";
-            }
-            else if (character == L'"')
-            {
-                result += "\\\"";
-            }
-            else if (character < 0x80)
-            {
-                result.push_back(static_cast<char>(character));
-            }
-            else
-            {
-                result.push_back('?');
-            }
+			return {};
         }
 
+		auto const required = WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			value.data(),
+			static_cast<int>(value.size()),
+			nullptr,
+			0,
+			nullptr,
+			nullptr);
+		std::string utf8(static_cast<std::size_t>(required), '\0');
+		WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			value.data(),
+			static_cast<int>(value.size()),
+			utf8.data(),
+			required,
+			nullptr,
+			nullptr);
+
+		std::string result;
+		result.reserve(utf8.size() + 8);
+		for (auto const character : utf8)
+		{
+			switch (static_cast<unsigned char>(character))
+			{
+			case '\\': result += "\\\\"; break;
+			case '"': result += "\\\""; break;
+			case '\n': result += "\\n"; break;
+			case '\r': result += "\\r"; break;
+			case '\t': result += "\\t"; break;
+			case '\b': result += "\\b"; break;
+			case '\f': result += "\\f"; break;
+			default:
+				if (static_cast<unsigned char>(character) < 0x20)
+				{
+					char buffer[7]{};
+					sprintf_s(buffer, "\\u%04x", static_cast<unsigned char>(character));
+					result += buffer;
+				}
+				else
+				{
+					result.push_back(character);
+				}
+				break;
+			}
+		}
         return result;
     }
 }

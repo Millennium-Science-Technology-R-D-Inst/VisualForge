@@ -10,13 +10,36 @@
             Key="Space"
             Modifiers="Control"
             Invoked="CompletionKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator
+            Key="D"
+            Modifiers="Control"
+            Invoked="DuplicateLineKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator
+            Key="K"
+            Modifiers="Control,Shift"
+            Invoked="DeleteLineKeyboardAccelerator_Invoked" />
+        <KeyboardAccelerator
+            Key="Divide"
+            Modifiers="Control"
+            Invoked="ToggleCommentKeyboardAccelerator_Invoked" />
     </UserControl.KeyboardAccelerators>
     <Grid Background="#10151D">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="14" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="14" />
+        </Grid.ColumnDefinitions>
         <canvas:CanvasControl
             x:Name="EditorCanvas"
+            Grid.Row="0"
+            Grid.Column="0"
             ClearColor="#10151D"
             Draw="EditorCanvas_Draw"
-            PointerPressed="EditorCanvas_PointerPressed" />
+            PointerPressed="EditorCanvas_PointerPressed"
+            SizeChanged="EditorCanvas_SizeChanged" />
         <TextBox
             x:Name="InputTextBox"
             AcceptsReturn="True"
@@ -27,12 +50,40 @@
             FontSize="13"
             Foreground="Transparent"
             IsSpellCheckEnabled="False"
+            Grid.Row="0"
+            Grid.Column="0"
             Margin="56,0,0,0"
             Opacity="0.01"
             Padding="12,8"
             SelectionHighlightColor="#00000000"
             TextWrapping="NoWrap"
+            PointerPressed="InputTextBox_PointerPressed"
+            PointerMoved="InputTextBox_PointerMoved"
+            PointerReleased="InputTextBox_PointerReleased"
+            KeyDown="InputTextBox_KeyDown"
             TextChanged="InputTextBox_TextChanged"
-            SelectionChanged="InputTextBox_SelectionChanged" />
+            SelectionChanged="InputTextBox_SelectionChanged">
+            <TextBox.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Cut" Click="ContextCut_Click" />
+                    <MenuFlyoutItem Text="Copy" Click="ContextCopy_Click" />
+                    <MenuFlyoutItem Text="Paste" Click="ContextPaste_Click" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Text="Select All" Click="ContextSelectAll_Click" />
+                </MenuFlyout>
+            </TextBox.ContextFlyout>
+        </TextBox>
+        <ScrollBar
+            x:Name="EditorVerticalScrollBar"
+            Grid.Row="0"
+            Grid.Column="1"
+            Orientation="Vertical"
+            ValueChanged="EditorVerticalScrollBar_ValueChanged" />
+        <ScrollBar
+            x:Name="EditorHorizontalScrollBar"
+            Grid.Row="1"
+            Grid.Column="0"
+            Orientation="Horizontal"
+            ValueChanged="EditorHorizontalScrollBar_ValueChanged" />
     </Grid>
 </UserControl>

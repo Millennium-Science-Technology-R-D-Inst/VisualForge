@@ -56,4 +56,58 @@ namespace VisualForge::Integration
             repositoryRoot,
             L"Read Git history");
     }
+
+    Tool::ToolCommand GitAdapter::CreateAddAllCommand(std::filesystem::path const& repositoryRoot) const
+    {
+        return m_registry.CreateCommand(
+            Tool::ToolKind::Git,
+            { L"add", L"--all" },
+            repositoryRoot,
+            L"Stage all Git changes");
+    }
+
+    Tool::ToolCommand GitAdapter::CreateCommitCommand(std::filesystem::path const& repositoryRoot, std::wstring message) const
+    {
+        return m_registry.CreateCommand(
+            Tool::ToolKind::Git,
+            { L"commit", L"-m", std::move(message) },
+            repositoryRoot,
+            L"Commit Git changes");
+    }
+
+    Tool::ToolCommand GitAdapter::CreatePullCommand(std::filesystem::path const& repositoryRoot) const
+    {
+        return m_registry.CreateCommand(
+            Tool::ToolKind::Git,
+            { L"pull" },
+            repositoryRoot,
+            L"Pull Git changes");
+    }
+
+    Tool::ToolCommand GitAdapter::CreatePushCommand(std::filesystem::path const& repositoryRoot) const
+    {
+        return m_registry.CreateCommand(
+            Tool::ToolKind::Git,
+            { L"push" },
+            repositoryRoot,
+            L"Push Git changes");
+    }
+
+    Tool::ToolCommand GitAdapter::CreateBranchListCommand(std::filesystem::path const& repositoryRoot) const
+    {
+        return m_registry.CreateCommand(
+            Tool::ToolKind::Git,
+            { L"branch", L"--all", L"--no-color" },
+            repositoryRoot,
+            L"List Git branches");
+    }
+
+    Tool::ToolCommand GitAdapter::CreateCheckoutCommand(std::filesystem::path const& repositoryRoot, std::wstring branch) const
+    {
+        return m_registry.CreateCommand(
+            Tool::ToolKind::Git,
+            { L"checkout", std::move(branch) },
+            repositoryRoot,
+            L"Checkout Git branch");
+    }
 }
